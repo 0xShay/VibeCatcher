@@ -8,12 +8,6 @@ passport.use(new GoogleStrategy({
     passReqToCallback: true
 }, (req, accessToken, refreshToken, profile, done) => {
     return done(null, profile);
-    // let err = null;
-    // console.log(profile);
-    // return done(err, {
-    //     id: profile.id,
-    //     name: profile.name
-    // });
 }))
 
 passport.serializeUser((user, done) => {
