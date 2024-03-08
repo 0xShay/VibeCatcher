@@ -14,7 +14,7 @@ function isLoggedIn(req, res, next) {
     req.user ? next() : res.sendStatus(401);
 }
 
-app.use(session({ secret: "cats" }));
+app.use(session({ secret: process.env.SESSION_SECRET_KEY }));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -23,7 +23,11 @@ app.get("/", (req, res) => {
 })
 
 app.get("/auth/google", passport.authenticate("google", {
-    scope: ["email", "profile"]
+    scope: [
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile",
+        "https://www.googleapis.com/auth/youtube.readonly"
+    ]
 }))
 
 app.get("/auth/failure", (req, res) => {
