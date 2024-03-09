@@ -16,6 +16,7 @@ function isLoggedIn(req, res, next) {
 app.use(session({ secret: process.env.SESSION_SECRET_KEY }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static("../client"));
 
 require("./auth")(connection);
 
