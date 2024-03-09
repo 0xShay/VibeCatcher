@@ -13,6 +13,8 @@ function isLoggedIn(req, res, next) {
     req.user ? next() : res.sendStatus(401);
 }
 
+const { getChannels, getRecentLiveStreams, insertUserChannelsIntoDB } = require("./utilities/youtubeTools.js");
+
 app.use(session({ secret: process.env.SESSION_SECRET_KEY }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -20,7 +22,7 @@ app.use(passport.session());
 require("./auth")(connection);
 
 app.get("/", (req, res) => {
-    res.status(200).send("<a href=\"/auth/google\">Authenticate with Google</a>");
+    return res.status(200).send("<a href=\"/auth/google\">Authenticate with Google</a>");
 })
 
 app.get("/auth/google", passport.authenticate("google", {
@@ -32,21 +34,23 @@ app.get("/auth/google", passport.authenticate("google", {
 }))
 
 app.get("/auth/google/failure", (req, res) => {
-    res.status(200).send("Login authentication failed");
+    return res.status(200).send("Login authentication failed");
 })
 
 app.get("/auth/google/callback", passport.authenticate("google"), isLoggedIn, (req, res) => {
-    res.redirect("/dashboard");
+    insertUserChannelsIntoDB(req.user.userID, req.user.accessToken);  
+    return res.redirect("/dashboard");
 })
 
 app.get("/logout", (req, res) => {
     req.logout(console.error);
-    res.send("Logged out")
+    return res.send("Logged out")
 })
 
-// app.get("/dashboard", isLoggedIn, (req, res) => {
-//     res.status(200).send("Dashboard");            ->
-// })
+app.get("/dashboard", isLoggedIn, (req, res) => {
+    https://www.googleapis.com/youtube/v3/liveStreams
+    res.status(200).send("Dashboard");
+})
 
 app.listen(PORT, () => {
     console.log("App is running on port " + PORT);
