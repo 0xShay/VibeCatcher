@@ -5,6 +5,6 @@ const chatMessageSchema = new mongoose.Schema({
     messageContent : String,
     streamID: String,
     authorID : Number,
-    timeStamp : Date,
+    timestamp : Date,
 });
 module.exports = mongoose.model("ChatMessage", chatMessageSchema);
