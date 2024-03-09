@@ -6,6 +6,13 @@ import axios from "axios";
 // Defining Navbar component (TypeScript)
 const Navbar: React.FC = () => {
 
+  const loginViaGoogle = () => {
+    //get request to back end to login then go to dashboard
+    const url = "http://localhost:3000/auth/google";
+    axios.get("http://localhost:3000/auth/google").catch(err => console.log(err));
+    window.location.href = url;
+  }
+
   return (
     <nav className="bg-gray-900 py-4 w-full">
       <div className="container mx-auto flex justify-between items-center font-[satoshi]">
@@ -19,12 +26,12 @@ const Navbar: React.FC = () => {
           <a href="#about" className="text-white hover:text-gray-400">
             About
           </a>
-          <a href="#Contact" className="text-white hover:text-gray-400">
+          <a href="#contact" className="text-white hover:text-gray-400">
             Contact
           </a>
         </div>
         <div  className="flex w-1/5 justify-center items-start font-bold ">
-          <button className="text-white hover:text-gray-400 pr-10">
+          <button onClick={loginViaGoogle} className="text-white hover:text-gray-400 pr-10">
             Login
           </button>
           <button className="text-white">
