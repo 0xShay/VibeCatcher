@@ -8,7 +8,7 @@ const app = express();
 
 const session = require("express-session");
 const passport = require("passport");
-require("./auth");
+require("./auth")(connection);
 
 function isLoggedIn(req, res, next) {
     req.user ? next() : res.sendStatus(401);
