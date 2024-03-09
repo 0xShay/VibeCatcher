@@ -33,21 +33,28 @@ app.get("/auth/google", passport.authenticate("google", {
     ]
 }))
 
-app.get("/auth/failure", (req, res) => {
+app.get("/auth/google/failure", (req, res) => {
     res.status(200).send("Login authentication failed");
 })
 
-app.get("/google/callback", passport.authenticate("google", {
-    successRedirect: "/dashboard",
-    failureRedirect: "/auth/failure"
-}))
+app.get("/auth/google/callback", passport.authenticate("google"), isLoggedIn, (req, res) => {
+    res.redirect("/dashboard");
+})
 
 app.get("/logout", (req, res) => {
-    req.logout();
-    res.send("Logged in")
+    req.logout(console.error);
+    res.send("Logged out")
 })
 
 app.get("/dashboard", isLoggedIn, (req, res) => {
+    // https://www.googleapis.com/youtube/v3/liveStreams
+    // axios.get(
+    //     "https://youtube.googleapis.com/youtube/v3/liveStreams?part=snippet&mine=true",
+    //     { headers: {"Authorization" : `Bearer ${req.user.accessToken}`} }
+    // ).then(res => {
+    //     console.log(res);
+    // });
+    // console.log(req.user);
     res.status(200).send("Dashboard");
 })
 
