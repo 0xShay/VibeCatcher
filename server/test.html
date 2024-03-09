@@ -1,0 +1,460 @@
+<!-- <script src="https://apis.google.com/js/api.js"></script>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script>
+  const client = new language.LanguageServiceClient();
+  let liveStreamId = "";
+  let nextPageToken = "";
+  let liveChatId = "";
+  let pollingActive = true;
+  let url = "https://www.youtube.com/watch?v=jfKfPfyJRdk&ab_channel=LofiGirl"
+
+  let isGapiLoaded = false; // Flag to track if gapi is loaded
+
+function loadGapiClient() {
+  // Load the gapi client and auth2 library
+  gapi.load('client:auth2', initClient);
+}
+
+function initClient() {
+  // Initialize the gapi client with the auth2 library
+  gapi.client.init({
+    apiKey: "YAIzaSyDJE7qeUovuMAOyzUtqTUsOH5BA3wFOemI",
+    clientId: "203431130708-27lidge60ealhtq5e06133moddjol6p5.apps.googleusercontent.com",
+    scope: "https://www.googleapis.com/auth/youtube.readonly"
+  }).then(function () {
+    isGapiLoaded = true; // Set the flag to true after successful loading
+    console.log("GAPI client initialized for API");
+  }).catch(function(error) {
+    console.error("Error initializing GAPI client for API", error);
+  });
+}
+
+  function authenticate() {
+    return gapi.auth2.getAuthInstance()
+        .signIn({scope: "https://www.googleapis.com/auth/youtube.readonly"})
+        .then(function() { console.log("Sign-in successful"); },
+              function(err) { console.error("Error signing in", err); });
+  }
+
+  function loadClient() {
+    gapi.client.setApiKey("AIzaSyDJE7qeUovuMAOyzUtqTUsOH5BA3wFOemI");
+    return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+        .then(function() { console.log("GAPI client loaded for API"); },
+              function(err) { console.error("Error loading GAPI client for API", err); });
+  }
+
+  // extract live stream Id from an URL
+  function extractBroadcastId(url) {
+  // Use URL constructor to parse the URL and get search parameters
+  const urlObj = new URL(url);
+  const liveStreamId = urlObj.searchParams.get('v');
+  if (liveStreamId) {
+    console.log(`The broadcast ID is: ${liveStreamId}`);
+    return liveStreamId;
+  } else {
+    console.error('No video ID found in the URL');
+    return null;
+  }
+}
+
+  // Make sure the client is loaded and sign-in is complete before calling this method.
+  function getLiveChatId(liveStreamId) {
+    return gapi.client.youtube.videos.list({
+      "part": [
+        "liveStreamingDetails"
+      ],
+      "id": [
+        liveStreamId
+      ]
+    })
+        .then(function(response) {
+                var liveChatId = response.result.items[0].liveStreamingDetails.activeLiveChatId;
+                // Handle the results here (response.result has the parsed body).
+                console.log("Live Chat Id Response", liveChatId);
+                return liveChatId;
+              },
+              function(err) { console.error("Execute error", err); });
+  
+  }
+
+  function getLiveChatMessages(liveChatId, pageToken) {
+    let requestParams = {
+      "liveChatId": liveChatId,
+      "part": [
+        "snippet,authorDetails"
+      ],
+      "pageToken": nextPageToken
+
+    };
+    
+    return gapi.client.youtube.liveChatMessages.list(requestParams)
+        .then(function(response) {
+                // Handle the results here (response.result has the parsed body).
+                nextPageToken = response.result.nextPageToken; 
+                console.log("Live Chat Messages Response", response);
+                return response
+              },
+              function(err) { console.error("Execute error", err); });
+  }
+
+  function extractMessages(response) {
+  if (response && response.result && response.result.items) {
+    return response.result.items.map(item => item.snippet.displayMessage);
+  } else {
+    // Handle the case where the items array is not as expected
+    console.error('Invalid response structure');
+    return []; // return an empty array or handle as appropriate
+  }
+}
+
+function pollNewMessages(liveChatId, liveStreamId) {
+  if (!pollingActive) {
+    console.log('Polling has been stopped.');
+    return;
+  }
+  console.log("from pollnewmessage:" + liveStreamId);
+
+  // Check if the broadcast is still live before fetching new messages
+  checkBroadcastStatus(liveStreamId).then(isLive => {
+    if (isLive) {
+      getLiveChatMessages(liveChatId, nextPageToken).then(response => {
+
+        // Extract new messages
+        const newMessages = extractMessages(response);
+        console.log(newMessages);
+        // Set a timeout to call this function again after 30 seconds if broadcast is still live
+        setTimeout(() => pollNewMessages(liveChatId, liveStreamId), 30000);
+      }).catch(error => {
+        console.error('Error fetching messages:', error);
+        // Set a timeout to try again after 30 seconds even if there's an error
+        setTimeout(() => pollNewMessages(liveChatId, liveStreamId), 30000);
+      });
+    } else {
+      console.log('Broadcast has ended. Stopping message polling.');
+      pollingActive = false; // Stop polling
+    }
+  });
+}
+  
+
+
+function checkBroadcastStatus(liveStreamId) {
+  console.log(liveStreamId);
+  return gapi.client.youtube.videos.list({
+    "part": ["liveStreamingDetails", "snippet"],
+    "id": [liveStreamId]
+  })
+  .then(function(response) {
+    console.log(response);
+    var status = response.result.items[0].snippet.liveBroadcastContent;
+    if (status === "live") {
+      console.log("Broadcast is still live");
+      return true
+    } else {
+      console.log("Broadcasr is ended");
+      return false;
+    }
+  }, function(err) { console.error("Execute error", err); });
+}
+
+
+
+function handleChatIdClick(url) { // Make sure to pass the URL parameter when calling this function
+  let liveStreamId = extractBroadcastId("https://www.youtube.com/watch?v=Hd9fOiTtrGk&ab_channel=MaskaChung");
+  if (liveStreamId) {
+    getLiveChatId(liveStreamId).then(liveChatId => {
+      if (liveChatId) {
+        pollNewMessages(liveChatId, liveStreamId); // Call pollNewMessages directly
+      } else {
+        console.error('Live Chat ID not found.');
+      }
+    }).catch(error => {
+      console.error('Error getting liveChatId:', error);
+    });
+  }
+}
+
+  gapi.load("client:auth2", function() {
+    gapi.auth2.init({client_id: "203431130708-27lidge60ealhtq5e06133moddjol6p5.apps.googleusercontent.com"});
+  });
+</script>
+NEWＨＴＭＬ -->
+<!-- <button onclick="authenticate().then(loadClient)">authorize and load</button>
+<button onclick="handleChatIdClick()">get live chat messages</button>
+<button onclick="moderateText()">moderate text</button> -->
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Live Chat Messages</title>
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+<body>
+
+<button onclick="authenticate().then(loadClient)">authorize and load</button>
+<button onclick="handleChatIdClick()">get live chat messages</button>
+<button onclick="moderateText()">moderate text</button>
+
+<script>
+  const client = new language.LanguageServiceClient();
+  let liveStreamId = "";
+  let nextPageToken = "";
+  let liveChatId = "";
+  let pollingActive = true;
+  let url = "https://www.youtube.com/watch?v=jfKfPfyJRdk&ab_channel=LofiGirl"
+
+  let isGapiLoaded = false; // Flag to track if gapi is loaded
+
+function loadGapiClient() {
+  // Load the gapi client and auth2 library
+  gapi.load('client:auth2', initClient);
+}
+
+function initClient() {
+  // Initialize the gapi client with the auth2 library
+  gapi.client.init({
+    apiKey: "YAIzaSyDJE7qeUovuMAOyzUtqTUsOH5BA3wFOemI",
+    clientId: "203431130708-27lidge60ealhtq5e06133moddjol6p5.apps.googleusercontent.com",
+    scope: "https://www.googleapis.com/auth/youtube.readonly"
+  }).then(function () {
+    isGapiLoaded = true; // Set the flag to true after successful loading
+    console.log("GAPI client initialized for API");
+  }).catch(function(error) {
+    console.error("Error initializing GAPI client for API", error);
+  });
+}
+
+  function authenticate() {
+    return gapi.auth2.getAuthInstance()
+        .signIn({scope: "https://www.googleapis.com/auth/youtube.readonly"})
+        .then(function() { console.log("Sign-in successful"); },
+              function(err) { console.error("Error signing in", err); });
+  }
+
+  function loadClient() {
+    gapi.client.setApiKey("AIzaSyDJE7qeUovuMAOyzUtqTUsOH5BA3wFOemI");
+    return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+        .then(function() { console.log("GAPI client loaded for API"); },
+              function(err) { console.error("Error loading GAPI client for API", err); });
+  }
+
+  // extract live stream Id from an URL
+  function extractBroadcastId(url) {
+  // Use URL constructor to parse the URL and get search parameters
+  const urlObj = new URL(url);
+  const liveStreamId = urlObj.searchParams.get('v');
+  if (liveStreamId) {
+    console.log(`The broadcast ID is: ${liveStreamId}`);
+    return liveStreamId;
+  } else {
+    console.error('No video ID found in the URL');
+    return null;
+  }
+}
+
+  // Make sure the client is loaded and sign-in is complete before calling this method.
+  function getLiveChatId(liveStreamId) {
+    return gapi.client.youtube.videos.list({
+      "part": [
+        "liveStreamingDetails"
+      ],
+      "id": [
+        liveStreamId
+      ]
+    })
+        .then(function(response) {
+                var liveChatId = response.result.items[0].liveStreamingDetails.activeLiveChatId;
+                // Handle the results here (response.result has the parsed body).
+                console.log("Live Chat Id Response", liveChatId);
+                return liveChatId;
+              },
+              function(err) { console.error("Execute error", err); });
+  
+  }
+
+  function getLiveChatMessages(liveChatId, pageToken) {
+    let requestParams = {
+      "liveChatId": liveChatId,
+      "part": [
+        "snippet,authorDetails"
+      ],
+      "pageToken": nextPageToken
+
+    };
+    
+    return gapi.client.youtube.liveChatMessages.list(requestParams)
+        .then(function(response) {
+                // Handle the results here (response.result has the parsed body).
+                nextPageToken = response.result.nextPageToken; 
+                console.log("Live Chat Messages Response", response);
+                return response
+              },
+              function(err) { console.error("Execute error", err); });
+  }
+
+  function extractMessages(response) {
+  if (response && response.result && response.result.items) {
+    return response.result.items.map(item => item.snippet.displayMessage);
+  } else {
+    // Handle the case where the items array is not as expected
+    console.error('Invalid response structure');
+    return []; // return an empty array or handle as appropriate
+  }
+}
+
+function pollNewMessages(liveChatId, liveStreamId) {
+  if (!pollingActive) {
+    console.log('Polling has been stopped.');
+    return;
+  }
+  console.log("from pollnewmessage:" + liveStreamId);
+
+  // Check if the broadcast is still live before fetching new messages
+  checkBroadcastStatus(liveStreamId).then(isLive => {
+    if (isLive) {
+      getLiveChatMessages(liveChatId, nextPageToken).then(response => {
+
+        // Extract new messages
+        const newMessages = extractMessages(response);
+        console.log(newMessages);
+        // Set a timeout to call this function again after 30 seconds if broadcast is still live
+        setTimeout(() => pollNewMessages(liveChatId, liveStreamId), 30000);
+      }).catch(error => {
+        console.error('Error fetching messages:', error);
+        // Set a timeout to try again after 30 seconds even if there's an error
+        setTimeout(() => pollNewMessages(liveChatId, liveStreamId), 30000);
+      });
+    } else {
+      console.log('Broadcast has ended. Stopping message polling.');
+      pollingActive = false; // Stop polling
+    }
+  });
+}
+  
+
+
+function checkBroadcastStatus(liveStreamId) {
+  console.log(liveStreamId);
+  return gapi.client.youtube.videos.list({
+    "part": ["liveStreamingDetails", "snippet"],
+    "id": [liveStreamId]
+  })
+  .then(function(response) {
+    console.log(response);
+    var status = response.result.items[0].snippet.liveBroadcastContent;
+    if (status === "live") {
+      console.log("Broadcast is still live");
+      return true
+    } else {
+      console.log("Broadcasr is ended");
+      return false;
+    }
+  }, function(err) { console.error("Execute error", err); });
+}
+
+
+
+function handleChatIdClick(url) { // Make sure to pass the URL parameter when calling this function
+  let liveStreamId = extractBroadcastId("https://www.youtube.com/watch?v=Hd9fOiTtrGk&ab_channel=MaskaChung");
+  if (liveStreamId) {
+    getLiveChatId(liveStreamId).then(liveChatId => {
+      if (liveChatId) {
+        pollNewMessages(liveChatId, liveStreamId); // Call pollNewMessages directly
+      } else {
+        console.error('Live Chat ID not found.');
+      }
+    }).catch(error => {
+      console.error('Error getting liveChatId:', error);
+    });
+  }
+}
+
+  gapi.load("client:auth2", function() {
+    gapi.auth2.init({client_id: "203431130708-27lidge60ealhtq5e06133moddjol6p5.apps.googleusercontent.com"});
+  });
+</script>
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Live Chat Messages</title>
+  <script src="https://apis.google.com/js/api.js"></script>
+</head>
+<body>
+
+<button onclick="authenticate().then(loadClient)">authorize and load</button>
+<button onclick="handleChatIdClick()">get live chat messages</button>
+
+<script>
+  let apiKey = "AIzaSyDJE7qeUovuMAOyzUtqTUsOH5BA3wFOemI";
+  let clientId = "203431130708-27lidge60ealhtq5e06133moddjol6p5.apps.googleusercontent.com";
+  let nextPageToken = "";
+
+  function authenticate() {
+    return gapi.auth2.getAuthInstance()
+      .signIn({scope: "https://www.googleapis.com/auth/youtube.force-ssl"})
+      .then(function() { console.log("Sign-in successful"); },
+            function(err) { console.error("Error signing in", err); });
+  }
+
+  function loadClient() {
+    gapi.client.setApiKey(apiKey);
+    return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
+      .then(function() { console.log("GAPI client loaded for API"); },
+            function(err) { console.error("Error loading GAPI client for API", err); });
+  }
+
+  function extractBroadcastId(url) {
+    const urlObj = new URL(url);
+    return urlObj.searchParams.get('v');
+  }
+
+  function getLiveChatId(liveStreamId) {
+    return gapi.client.youtube.videos.list({
+      "part": ["liveStreamingDetails"],
+      "id": [liveStreamId]
+    }).then(function(response) {
+      return response.result.items[0].liveStreamingDetails.activeLiveChatId;
+    });
+  }
+
+  function getLiveChatMessages(liveChatId) {
+    let requestParams = {
+      "liveChatId": liveChatId,
+      "part": ["snippet"],
+      "pageToken": nextPageToken
+    };
+    return gapi.client.youtube.liveChatMessages.list(requestParams);
+  }
+
+  function pollNewMessages(liveChatId) {
+    getLiveChatMessages(liveChatId).then(response => {
+      nextPageToken = response.result.nextPageToken;
+      const messages = response.result.items.map(item => item.snippet.displayMessage);
+      console.log(messages);
+      setTimeout(() => pollNewMessages(liveChatId), 30000);
+    });
+  }
+
+  function handleChatIdClick() {
+    let url = "https://www.youtube.com/watch?v=jfKfPfyJRdk&ab_channel=LofiGirl";
+    let liveStreamId = extractBroadcastId(url);
+    if (liveStreamId) {
+      getLiveChatId(liveStreamId).then(liveChatId => {
+        pollNewMessages(liveChatId);
+      });
+    }
+  }
+
+  gapi.load("client:auth2", function() {
+    gapi.auth2.init({client_id: clientId});
+  });
+</script>
+
+</body>
+</html>

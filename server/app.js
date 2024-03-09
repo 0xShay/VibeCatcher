@@ -1,5 +1,6 @@
 const config = require("./config.json");
-
+const PORT = 3000;
+const path = require('path');
 const mongoose = require("mongoose");
 const connection = mongoose.connect(process.env.MONGO_CONNECTION_URL);
 
@@ -12,7 +13,7 @@ const passport = require("passport");
 function isLoggedIn(req, res, next) {
     req.user ? next() : res.sendStatus(401);
 }
-
+app.use(express.static('public'));
 const { getChannels, getRecentLiveStreams, insertUserChannelsIntoDB } = require("./utilities/youtubeTools.js");
 
 app.use(session({ secret: process.env.SESSION_SECRET_KEY }));
@@ -72,6 +73,9 @@ app.get("/api/get-recent-live-streams", isLoggedIn, async (req, res) => {
 app.get("/api/insert-channels", isLoggedIn, async (req, res) => {
     return (await insertUserChannelsIntoDB(req.user.userID, req.user.accessToken)) ? res.status(200).send(200) : res.status(400).send(400);
 })
+app.get('/test.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'test.html'));
+  });
 
 app.listen(PORT, () => {
     console.log("App is running on port " + PORT);
