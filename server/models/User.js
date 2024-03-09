@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema({
     displayName: String,
     credits : Number,
     accessToken: String,
-    refreshToken: String
+    refreshToken: String,
+    publicKey: Buffer,
+    secretKey: Buffer
 });
 module.exports = mongoose.model("User", userSchema);
