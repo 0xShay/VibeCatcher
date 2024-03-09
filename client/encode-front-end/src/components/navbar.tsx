@@ -5,18 +5,33 @@
 // Defining Navbar component (TypeScript)
 const Navbar: React.FC = () => {
   return (
-    <nav className="bg-white shadow">
-      <div className="container mx-auto px-6 py-3">
-        <div className="flex justify-between items-center">
-          <div className="text-lg font-semibold">My Sentiment Analysis Dashboard</div>
-          <div>
-            <a href="/dashboard" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition duration-300">Dashboard</a>
-          </div>
+    <nav className="bg-gray-900 py-4 w-full">
+      <div className="container mx-auto flex justify-between items-center font-[satoshi]">
+        <a href="#" className="text-xl text-white font-bold pl-10">
+          VibeCatcher
+        </a>
+        <div className="flex w-1/5 justify-between items-start font-bold pl-20">
+          <a href="#" className="text-white hover:text-gray-400">
+            Home
+          </a>
+          <a href="#" className="text-white hover:text-gray-400">
+            About
+          </a>
+          <a href="#" className="text-white hover:text-gray-400">
+            Contact
+          </a>
+        </div>
+        <div className="flex w-1/5 justify-center items-start font-bold ">
+          <a href="#" className="text-white hover:text-gray-400 pr-10">
+            Login
+          </a>
+          <button className="text-white">
+            Get notified
+          </button>
         </div>
       </div>
     </nav>
   );
-}
+};
 
 export default Navbar;
-
