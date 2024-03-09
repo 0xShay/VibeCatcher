@@ -5,9 +5,3 @@
 @import 'tailwindcss/components';
 
 @import 'tailwindcss/utilities';
-
-body {
-  background-color: #121212; /* Your dark background color */
-  color: #E0E0E0; /* Your text color for dark mode */
-  /* Apply other global styles for dark mode here */
-}

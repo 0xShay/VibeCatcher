@@ -3,15 +3,20 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css'
-
-import Navbar from './components/navbar.tsx'
+import ProtectedRoute from './components/ProtectedRoute.tsx';
 import Dashboard from './views/dashboard.tsx'
+import Home from './views/home.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Navbar />
-    <Dashboard />
-
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        {/* Define other routes */}
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>,
-)
+);

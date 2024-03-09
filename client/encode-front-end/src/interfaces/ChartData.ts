@@ -6,7 +6,11 @@ export interface ISentimentScore {
     score: number;
   }
   
-  export interface IEntitySentiment {
+export interface IEntitySentiment {
     entity: string;
     score: number;
+  }
+
+export interface PieChartProps {
+    sentimentLabels: { label: string; count: number }[];
   }

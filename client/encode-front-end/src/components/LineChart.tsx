@@ -18,12 +18,13 @@ interface LineChartProps {
       labels: sentimentData.map((dataPoint) => dataPoint.timestamp),
       datasets: [
         {
-          label: 'Sentiment Score',
-          data: sentimentData.map((dataPoint) => dataPoint.score),
-          borderColor: 'rgb(53, 162, 235)',
-          backgroundColor: 'rgba(53, 162, 235, 0.5)',
+            label: 'Sentiment Score',
+            data: sentimentData.map((dataPoint) => dataPoint.score),
+            borderColor: 'rgb(75, 192, 192)', // Example color
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
         },
-      ],
+    ],
+    
     };
   
     return <Line data={data} />;
