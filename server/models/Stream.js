@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const streamSchema = new mongoose.Schema({
     streamID : String,
     streamerID : String,
-    timeStamp : Date,
+    timestamp : Date,
     numChatUsers : Number,
 });
 module.exports = mongoose.model("Stream", streamSchema);

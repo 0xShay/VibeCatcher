@@ -1,0 +1,13 @@
+{
+    "port": 3000,
+    "solana": {
+        "endpoint": "https://api.devnet.solana.com",
+        "wallet": {
+            "publicKey": "FtMZ3Wym4yjkLRhDEAzaNNqmzHeZ2puQp7v2pJeKmARd"
+        },
+        "payment": {
+            "label": "VibeCatcher",
+            "icon": "https://shay.services/img/favicon.png"
+        }
+    }
+}
