@@ -2,37 +2,48 @@
 // This file contains dashboard view
 // Importing necessary modules 
 import React from 'react'
-import { Bar } from 'react-chartjs-2';
+import { LineChart } from '../components/LineChart';
+import { ISentimentScore } from '../interfaces/ChartData';
 
 // Defining Dashboard component (TypeScript)
 const Dashboard: React.FC = () => {
-    const data = {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-      datasets: [
-        {
-          label: 'Sample Dataset',
-          backgroundColor: 'rgba(99, 132, 255, 0.2)',
-          borderColor: 'rgba(99, 132, 255, 1)',
-          borderWidth: 1,
-          hoverBackgroundColor: 'rgba(99, 132, 255, 0.4)',
-          hoverBorderColor: 'rgba(99, 132, 255, 1)',
-          data: [65, 59, 80, 81, 56, 55, 40],
-        },
-      ],
-    };
-  
+    // Simulated dynamic data
+    const sentimentScores: ISentimentScore[] = [
+        { timestamp: 'January', score: 0.3 },
+        { timestamp: 'February', score: 0.6 },
+        { timestamp: 'March', score: 0.4 },
+        { timestamp: 'April', score: 0.5 },
+        { timestamp: 'May', score: 0.7 },
+        { timestamp: 'June', score: 0.2 },
+        { timestamp: 'July', score: 0.8 },
+    ];
+    
     return (
-      <div className="p-5">
-        <h1 className="text-2xl font-bold mb-5">Analytics Dashboard</h1>
-        <div className="shadow-lg rounded-lg overflow-hidden">
-            {/* Data from backend */}
-          <Bar data={data} options={{ responsive: true, maintainAspectRatio: false }} />
-        </div>
-      </div>
-    );
-  };
+        <div className="flex flex-grow min-h-screen">
+            {/* Dashboard-specific Vertical Navbar */}
+            <div className="w-40 lg:w-64 bg-gray-700 text-white py-4">
+                <h2 className="text-lg font-semibold px-4 mb-4">Dashboard</h2>
+                <ul className="flex flex-col space-y-2">
+                    <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Analytics Overview</li>
+                    <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Sentiment Analysis</li>
+                    <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Entity Analysis</li>
+                    {/* Add other dashboard-specific navigation items */}
+                </ul>
+            </div>
 
-export default Dashboard
+            {/* Main Content Area of Dashboard */}
+            <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 p-5">
+                <div className="bg-white p-4 rounded-lg shadow">
+                    <h3 className="font-semibold">Sentiment Over Time</h3>
+                    <LineChart sentimentData={sentimentScores} />
+                </div>
+                {/* Other sections or visualizations can follow here */}
+            </div>
+        </div>
+    );
+};
+
+export default Dashboard;
 
 // Exporting Dashboard component
 
