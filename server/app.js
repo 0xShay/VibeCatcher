@@ -48,6 +48,14 @@ app.get("/logout", (req, res) => {
     return res.send("Logged out")
 })
 
+app.get("/dashboard", isLoggedIn, (req, res) => {
+    https://www.googleapis.com/youtube/v3/liveStreams
+    res.status(200).send("Dashboard");
+})
+
+app.listen(PORT, () => {
+    console.log("App is running on port " + PORT);
+})
 app.get("/api/get-channels", isLoggedIn, async (req, res) => {
     try {
         const channels = await getChannels(req.user.accessToken);
@@ -76,7 +84,3 @@ app.get("/api/insert-channels", isLoggedIn, async (req, res) => {
 app.get('/test.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'test.html'));
   });
-
-app.listen(PORT, () => {
-    console.log("App is running on port " + PORT);
-})
