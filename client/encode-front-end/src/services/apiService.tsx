@@ -5,6 +5,8 @@
 // Importing necessary modules
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
+const BASE_URL = 'http://localhost:3000';
+
 export class ApiService {
   private readonly httpClient: AxiosInstance;
 
@@ -16,6 +18,15 @@ export class ApiService {
         'Content-Type': 'application/json',
       },
     });
+  }
+  
+  public getUserData(): Promise<AxiosResponse> {
+    return this.httpClient.get("/api/get-user-data");
+  }
+
+
+  public login() {
+    window.location.href = `${BASE_URL}/auth/google`;
   }
 
   public getChannels(): Promise<AxiosResponse> {
@@ -47,6 +58,6 @@ export class ApiService {
   }
 }
 
-const BASE_URL = 'http://localhost:3000';
+
 const apiService = new ApiService(BASE_URL);
 export default apiService;

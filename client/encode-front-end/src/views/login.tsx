@@ -2,22 +2,17 @@
 // This file contains Login component
 
 // Example Login component
-import React from 'react';
-import { useAuth } from '../context/AuthContext';
+import apiService from '../services/apiService';
 
 const Login: React.FC = () => {
-  const { login } = useAuth();
-  
   const handleLogin = () => {
-    // Perform authentication (e.g., API call to validate credentials)
-    // If successful:
-    login();
-    // Redirect to dashboard or desired authenticated route
+    // Redirect user to Google OAuth login page
+    apiService.login(); // Adjust this line according to your ApiService method
   };
 
   return (
     <div>
-      <button onClick={handleLogin}>Login</button>
+      <button onClick={handleLogin}>Login with Google</button>
     </div>
   );
 };
