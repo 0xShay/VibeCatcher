@@ -9,6 +9,8 @@ const app = express();
 const session = require("express-session");
 const passport = require("passport");
 
+const User = require("./models/User");
+
 function isLoggedIn(req, res, next) {
     req.user ? next() : res.sendStatus(401);
 }
@@ -76,3 +78,20 @@ app.get("/api/insert-channels", isLoggedIn, async (req, res) => {
 app.listen(PORT, () => {
     console.log("App is running on port " + PORT);
 })
+
+app.get("/api/get-user-data", isLoggedIn, async (req, res) => {
+    await User.find({
+        userID: req.user.id
+    }).then((user) => {
+        if (!user) {
+            return res.status(404).send("User not found");
+        } else {
+            return {
+                userID : user.userID,
+                displayName: user.displayName,
+                credits : user.credits
+                publicKey : user.publicKey
+            };
+        }
+    });
+});
