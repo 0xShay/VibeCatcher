@@ -8,7 +8,6 @@ const app = express();
 
 const session = require("express-session");
 const passport = require("passport");
-require("./auth");
 
 function isLoggedIn(req, res, next) {
     req.user ? next() : res.sendStatus(401);
@@ -17,6 +16,9 @@ function isLoggedIn(req, res, next) {
 app.use(session({ secret: process.env.SESSION_SECRET_KEY }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static("../client"));
+
+require("./auth")(connection);
 
 app.get("/", (req, res) => {
     res.status(200).send("<a href=\"/auth/google\">Authenticate with Google</a>");
@@ -30,21 +32,21 @@ app.get("/auth/google", passport.authenticate("google", {
     ]
 }))
 
-app.get("/auth/failure", (req, res) => {
+app.get("/auth/google/failure", (req, res) => {
     res.status(200).send("Login authentication failed");
 })
 
-app.get("/google/callback", passport.authenticate("google", {
-    successRedirect: "/dashboard",
-    failureRedirect: "/auth/failure"
-}))
+app.get("/auth/google/callback", passport.authenticate("google"), isLoggedIn, (req, res) => {
+    res.redirect("/dashboard");
+})
 
 app.get("/logout", (req, res) => {
-    req.logout();
-    res.send("Logged in")
+    req.logout(console.error);
+    res.send("Logged out")
 })
 
 app.get("/dashboard", isLoggedIn, (req, res) => {
+    https://www.googleapis.com/youtube/v3/liveStreams
     res.status(200).send("Dashboard");
 })
 
