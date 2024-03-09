@@ -2,7 +2,7 @@
   "name": "encode-hackathon-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.html",
   "scripts": {
     "server": "node --env-file=.env app.js"
   },

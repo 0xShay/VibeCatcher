@@ -10,17 +10,22 @@ const session = require("express-session");
 const passport = require("passport");
 require("./auth");
 
+app.use(express.static('../client'));
+
 function isLoggedIn(req, res, next) {
     req.user ? next() : res.sendStatus(401);
 }
 
-app.use(session({ secret: process.env.SESSION_SECRET_KEY }));
+const crypto = require('crypto');
+const sessionSecret = crypto.randomBytes(64).toString('hex');
+
+app.use(session({ secret: sessionSecret }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/", (req, res) => {
-    res.status(200).send("<a href=\"/auth/google\">Authenticate with Google</a>");
-})
+ app.get("/", (req, res) => {
+     res.status(200).send("<a href=\"/auth/google\">Authenticate with Google</a>");
+ })
 
 app.get("/auth/google", passport.authenticate("google", {
     scope: [
@@ -35,7 +40,7 @@ app.get("/auth/failure", (req, res) => {
 })
 
 app.get("/google/callback", passport.authenticate("google", {
-    successRedirect: "/dashboard",
+    successRedirect: "/",
     failureRedirect: "/auth/failure"
 }))
 
@@ -47,6 +52,11 @@ app.get("/logout", (req, res) => {
 app.get("/dashboard", isLoggedIn, (req, res) => {
     res.status(200).send("Dashboard");
 })
+
+app.use(express.static('client/encode-front-end'), (req, res, next) => {
+    console.log('Served static files.');
+    next();
+});
 
 app.listen(PORT, () => {
     console.log("App is running on port " + PORT);
