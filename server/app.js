@@ -1,4 +1,4 @@
-const PORT = 3000;
+const config = require("./config.json");
 
 const mongoose = require("mongoose");
 const connection = mongoose.connect(process.env.MONGO_CONNECTION_URL);
