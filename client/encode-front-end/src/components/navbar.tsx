@@ -1,6 +1,7 @@
 // File: client/encode-front-end/src/components/navbar.tsx
 // This file contains navbar component
 // Importing necessary modules
+
 import React from "react";
 
 // Defining Navbar component (TypeScript)
@@ -8,6 +9,7 @@ const Navbar: React.FC = () => {
 
   const loginViaGoogle = () => {
     // Redirection to Google OAuth flow
+
     const url = "http://localhost:3000/auth/google";
     window.location.href = url;
   }
@@ -30,6 +32,7 @@ const Navbar: React.FC = () => {
           </a>
         </div>
         <div className="flex w-1/5 justify-center items-start font-bold">
+
           <button onClick={loginViaGoogle} className="text-white hover:text-gray-400 pr-10">
             Login
           </button>
@@ -43,3 +46,4 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
