@@ -26,6 +26,37 @@ interface LineChartProps {
     ],
     
     };
+
+    const options = {
+        scales: {
+          y: {
+            ticks: {
+              color: "#ffffff",
+            },
+            grid: {
+              color: "rgba(255, 255, 255, 0.1)",
+            },
+          },
+          x: {
+            ticks: {
+              color: "#ffffff",
+            },
+            grid: {
+              color: "rgba(255, 255, 255, 0.1)",
+            },
+          },
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: "#ffffff",
+            },
+          },
+          tooltip: {
+            // Custom tooltip styling if needed
+          },
+        },
+      };
   
-    return <Line data={data} />;
+      return <Line data={data} options={options} />;
   };

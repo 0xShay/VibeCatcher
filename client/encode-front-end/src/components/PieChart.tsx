@@ -32,5 +32,23 @@ export const PieChart: React.FC<PieChartProps> = ({ sentimentLabels }) => {
     ],
   };
 
-  return <Pie data={data} />;
+  const options = {
+    plugins: {
+      legend: {
+        labels: {
+          color: "#ffffff", // Ensures legend text is visible on dark backgrounds
+        },
+      },
+      tooltip: {
+        callbacks: {
+          // Custom tooltip styling or callbacks as needed
+        },
+        bodyColor: "#ffffff", // Ensures tooltip text color is visible on dark backgrounds
+        titleColor: "#ffffff",
+        backgroundColor: "rgba(50, 50, 50, 0.8)", // Darker background for tooltips
+      },
+    },
+  };
+
+  return <Pie data={data} options={options} />;
 };
