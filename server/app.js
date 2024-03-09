@@ -8,7 +8,8 @@ const app = express();
 
 const session = require("express-session");
 const passport = require("passport");
-require("./auth")(connection);
+
+const axios = require("axios");
 
 function isLoggedIn(req, res, next) {
     req.user ? next() : res.sendStatus(401);
@@ -17,6 +18,8 @@ function isLoggedIn(req, res, next) {
 app.use(session({ secret: process.env.SESSION_SECRET_KEY }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+require("./auth")(connection);
 
 app.get("/", (req, res) => {
     res.status(200).send("<a href=\"/auth/google\">Authenticate with Google</a>");
