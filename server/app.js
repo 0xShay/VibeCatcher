@@ -73,6 +73,21 @@ app.get("/api/insert-channels", isLoggedIn, async (req, res) => {
     return (await insertUserChannelsIntoDB(req.user.userID, req.user.accessToken)) ? res.status(200).send(200) : res.status(400).send(400);
 })
 
+//getStreamAnalytics Mock get endpoint
+const mockStreamAnalyticsData = {
+    "timestamp": Date.now(),
+    "stream_id": "abc123",
+    "analytics": {
+      "sentiment": 1000,
+      "graph": [0,0.4,1,-0.2,1,0],
+      "comments": 200
+    }
+  };
+
+app.get('/stream-analytics', (req, res) => {
+    res.status(200).json(mockStreamAnalyticsData); 
+  });
+
 app.listen(PORT, () => {
     console.log("App is running on port " + PORT);
 })
