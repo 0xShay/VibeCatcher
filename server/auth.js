@@ -8,13 +8,12 @@ module.exports = (connection) => {
     passport.use(new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "http://localhost:3000/google/callback",
+        callbackURL: "http://localhost:3000/auth/google/callback",
         passReqToCallback: true
-    }, (req, accessToken, refreshToken, profile, done) => {
-        User.findOne({
+    }, async (req, accessToken, refreshToken, profile, done) => {
+        await User.findOne({
             userID: profile.id
-        }).then((err, user) => {
-            if (err) return done(err, user);
+        }).then((user) => {
             if (!user) {
                 newUser = new User({
                     userID: profile.id,
@@ -22,28 +21,26 @@ module.exports = (connection) => {
                     displayName: profile.displayName,
                     credits: 0
                 });
-                newUser.save().catch(console.error);
-                return done(null, user);
-            } else {
-                return done(null, user);                
-            }
-        }).catch((err) => { return done(err, null); });
+                newUser.save().catch((err) => { console.error("l24 auth: " + err); return done(err); });
+                user = newUser;
+            };
+            return done(null, user);
+        }).catch((err) => { console.error("l44 auth: " + err); return done(err); });
     }))
     
     passport.serializeUser((user, done) => {
-        done(null, user.userID);
+        return done(null, user.userID);
     })
     
     passport.deserializeUser((userID, done) => {
         User.findOne({
             userID: userID
-        }).then((err, user) => {
-            if (err) return done(err, user);
+        }).then((user) => {
             if (!user) {
-                return done(new Error("User not found"), null);
+                return done(new Error("User not found"));
             } else {
                 return done(null, user);
             }
-        }).catch((err) => { return done(err, null); });
+        }).catch((err) => { console.error("l44 auth: " + err); return done(err); });
     })
 }
