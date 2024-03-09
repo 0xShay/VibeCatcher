@@ -9,7 +9,6 @@ const Navbar: React.FC = () => {
   const loginViaGoogle = () => {
     //get request to back end to login then go to dashboard
     const url = "http://localhost:3000/auth/google";
-    axios.get("http://localhost:3000/auth/google").catch(err => console.log(err));
     window.location.href = url;
   }
 

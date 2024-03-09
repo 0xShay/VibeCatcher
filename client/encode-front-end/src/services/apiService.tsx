@@ -1,10 +1,11 @@
-// File: client/encode-front-end/src/services/dashboard_data.tsx
-// This file contains dashboard data service
+// File: client/encode-front-end/src/services/apiService.tsx
+// This file contains ApiService class
+
+// Implement API service class to fetch data from backend
 // Importing necessary modules
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-// Defining dashboard data service
-
+// Defining API service class
 export class ApiService {
   private readonly httpClient: AxiosInstance;
 
@@ -16,7 +17,7 @@ export class ApiService {
       },
     });
 
-    // Here you can add interceptors if needed
+
   }
 
   public get<T = any>(url: string, params?: object): Promise<AxiosResponse<T>> {
@@ -42,4 +43,5 @@ export class ApiService {
 const BASE_URL = 'https://your.api.url.here'; // Replace with your actual API base URL
 
 // Exporting a singleton instance of ApiService
-export const apiService = new ApiService(BASE_URL);
+const apiService = new ApiService(BASE_URL);
+export default apiService;
