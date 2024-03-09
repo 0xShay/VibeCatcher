@@ -1,9 +1,10 @@
-async function quickstart() {
-  // Imports the Google Cloud client library
-  const language = require('@google-cloud/language');
+// Imports the Google Cloud client library
+const language = require('@google-cloud/language');
 
-  // Instantiates a client
-  const client = new language.LanguageServiceClient();
+// Instantiates a client
+const client = new language.LanguageServiceClient();
+
+async function quickstart() {
 
   // The text messages to analyze
   var messages = [
@@ -83,10 +84,11 @@ async function quickstart() {
   ];
 
   let totalSentimentScore = 0;
+  let nonIgnoredMessages = 0;
 
   for (let i = 0; i < messages.length; i++) {
       const liveChatMessage = {
-          content: messages[i][0],
+          content: messages[i],
           type: 'PLAIN_TEXT',
       };
 
@@ -99,6 +101,7 @@ async function quickstart() {
         console.log(`Sentiment score: ${sentiment.score}`);
 
         totalSentimentScore += sentiment.score;
+        nonIgnoredMessages += 1;
       } catch (error) {
         if (error.details && error.details.includes('invalid argument')) {
           continue;
@@ -106,7 +109,7 @@ async function quickstart() {
       }
   }
 
-  let averageSentimentScore = totalSentimentScore / messages.length;
+  let averageSentimentScore = totalSentimentScore / nonIgnoredMessages;
   console.log(`Average Stream Sentiment Score: ${averageSentimentScore}`);
 }
 
