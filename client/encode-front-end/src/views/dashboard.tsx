@@ -2,11 +2,13 @@
 // This file contains dashboard view
 // Importing necessary modules 
 import React from 'react'
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom at the top
 import { LineChart } from '../components/LineChart';
 import { ISentimentScore } from '../interfaces/ChartData';
 import { PieChartProps } from '../interfaces/ChartData';
 import { DataTable } from '../components/DataTable';
 import { PieChart } from '../components/PieChart';
+
 
 // Defining Dashboard component (TypeScript)
 const Dashboard: React.FC = () => {
@@ -46,6 +48,7 @@ const Dashboard: React.FC = () => {
     
     return (
         <div className="flex flex-grow min-h-screen bg-gradient-to-bl from-darkBlue to-trueBlack text-gray-300">
+            {/* Mock navbar */}
             <div className="w-40 lg:w-64 bg-gray-700 text-white py-4">
                 <h2 className="text-lg font-semibold px-4 mb-4">Dashboard</h2>
                 <ul className="flex flex-col space-y-2">
@@ -53,6 +56,9 @@ const Dashboard: React.FC = () => {
                     <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Sentiment Analysis</li>
                     <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Entity Analysis</li>
                     {/* Additional mock navbar buttons */}
+                    <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">
+                    <Link to="/payments">Buy Credits</Link> {/* Add this line */}
+                    </li>
                     <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Settings</li>
                     <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Profile</li>
                     <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Logout</li>
