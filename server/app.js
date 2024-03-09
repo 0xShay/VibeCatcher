@@ -44,10 +44,9 @@ app.get("/logout", (req, res) => {
     res.send("Logged out")
 })
 
-app.get("/dashboard", isLoggedIn, (req, res) => {
-    https://www.googleapis.com/youtube/v3/liveStreams
-    res.status(200).send("Dashboard");
-})
+// app.get("/dashboard", isLoggedIn, (req, res) => {
+//     res.status(200).send("Dashboard");            ->
+// })
 
 app.listen(PORT, () => {
     console.log("App is running on port " + PORT);
