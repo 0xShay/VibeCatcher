@@ -433,13 +433,28 @@ function handleChatIdClick(url) { // Make sure to pass the URL parameter when ca
   }
 
   function pollNewMessages(liveChatId) {
-    getLiveChatMessages(liveChatId).then(response => {
-      nextPageToken = response.result.nextPageToken;
-      const messages = response.result.items.map(item => item.snippet.displayMessage);
-      console.log(messages);
-      setTimeout(() => pollNewMessages(liveChatId), 30000);
-    });
-  }
+  getLiveChatMessages(liveChatId).then(response => {
+    nextPageToken = response.result.nextPageToken;
+    const messages = response.result.items.map(item => item.snippet.displayMessage);
+
+    // Grab the last message's timestamp, if there are messages present
+    let lastMessageTimestamp = response.result.items.length > 0 
+      ? response.result.items[response.result.items.length - 1].snippet.publishedAt
+      : "No messages";
+
+    // Log the array of messages and last timestamp
+    console.log([messages, lastMessageTimestamp]);
+
+    // Continue polling for new messages every 30 seconds
+    setTimeout(() => pollNewMessages(liveChatId), 30000);
+
+    // Return the array of messages and the last timestamp
+    return [messages, lastMessageTimestamp];
+  }).catch(error => {
+    console.error('Error fetching messages:', error);
+  });
+}
+
 
   function handleChatIdClick() {
     let url = "https://www.youtube.com/watch?v=jfKfPfyJRdk&ab_channel=LofiGirl";
