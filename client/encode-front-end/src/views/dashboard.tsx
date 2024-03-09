@@ -37,42 +37,45 @@ const Dashboard: React.FC = () => {
     }));
     
     return (
-    <div className="flex flex-grow min-h-screen bg-gradient-to-bl from-darkBlue to-trueBlack">
-        {/* Dashboard-specific Vertical Navbar */}
-        <div className="w-40 lg:w-64 bg-gray-700 text-white py-4">
-            {/* Navbar content */}
-        </div>
+        <div className="flex flex-grow min-h-screen bg-gradient-to-bl from-darkBlue to-trueBlack text-gray-300">
+            {/* Dashboard-specific Vertical Navbar */}
+            <div className="w-40 lg:w-64 bg-gray-700 text-white py-4">
+                <h2 className="text-lg font-semibold px-4 mb-4">Dashboard</h2>
+                <ul className="flex flex-col space-y-2">
+                    <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Analytics Overview</li>
+                    <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Sentiment Analysis</li>
+                    <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Entity Analysis</li>
+                    {/* Mock navbar buttons */}
+                    <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Settings</li>
+                    <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Profile</li>
+                    <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Logout</li>
+                </ul>
+            </div>
 
-        {/* Main Content Area of Dashboard */}
-        <div className="flex-grow p-5">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* Sentiment Score Over Time */}
-                <div className="bg-white p-4 rounded-lg shadow">
-                    <h3 className="font-semibold">Sentiment Score Over Time</h3>
-                    <LineChart sentimentData={sentimentScores} />
-                </div>
-                {/* Sentiment Label Distribution */}
-                <div className="bg-white p-4 rounded-lg shadow">
-                    <h3 className="font-semibold">Sentiment Labels</h3>
-                    {/* Placeholder for the second graph or visualization */}
-                    {/* You can create a new component similar to LineChart to handle different data visualization */}
-                    <div className="h-64">Second Graph Placeholder
-                    <PieChart sentimentLabels={pieChartData} />
+            {/* Main Content Area of Dashboard */}
+            <div className="flex-grow p-5">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {/* Sentiment Score Over Time */}
+                    <div className="bg-gray-800 p-4 rounded-lg shadow">
+                        <h3 className="font-semibold">Sentiment Score Over Time</h3>
+                        <LineChart sentimentData={sentimentScores} />
+                    </div>
+                    {/* Sentiment Label Distribution */}
+                    <div className="bg-gray-800 p-4 rounded-lg shadow">
+                        <h3 className="font-semibold">Sentiment Labels</h3>
+                        <PieChart sentimentLabels={pieChartData} />
                     </div>
                 </div>
-            </div>
-            {/* Table for additional data visualization at the bottom */}
-            <div className="bg-white mt-4 p-4 rounded-lg shadow">
-                <h3 className="font-semibold">Detailed Sentiment Analysis</h3>
-                {/* Placeholder for table */}
-                <div className="h-64">Table Placeholder</div>
+                {/* Table for additional data visualization at the bottom */}
+                <div className="bg-gray-800 mt-4 p-4 rounded-lg shadow">
+                    <h3 className="font-semibold">Detailed Sentiment Analysis</h3>
+                    {/* Placeholder for table */}
+                    <div className="h-64">Table Placeholder</div>
+                </div>
             </div>
         </div>
-    </div>
-);
-    };
-
-export default Dashboard;
+    );
+};
 
 // Exporting Dashboard component
-
+export default Dashboard;
