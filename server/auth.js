@@ -19,13 +19,19 @@ module.exports = (connection) => {
                     userID: profile.id,
                     email: profile.email,
                     displayName: profile.displayName,
+                    accessToken: accessToken,
+                    refreshToken: refreshToken,
                     credits: 0
                 });
-                newUser.save().catch((err) => { console.error("l24 auth: " + err); return done(err); });
+                newUser.save().catch((err) => { return done(err); });
                 user = newUser;
+            } else {
+                user.accessToken = accessToken;
+                user.refreshToken = refreshToken;
+                user.save().catch((err) => { return done(err); })
             };
             return done(null, user);
-        }).catch((err) => { console.error("l44 auth: " + err); return done(err); });
+        }).catch((err) => { return done(err); });
     }))
     
     passport.serializeUser((user, done) => {
@@ -41,6 +47,6 @@ module.exports = (connection) => {
             } else {
                 return done(null, user);
             }
-        }).catch((err) => { console.error("l44 auth: " + err); return done(err); });
+        }).catch((err) => { return done(err); });
     })
 }

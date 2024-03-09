@@ -13,6 +13,8 @@ function isLoggedIn(req, res, next) {
     req.user ? next() : res.sendStatus(401);
 }
 
+const { getChannels, getRecentLiveStreams, insertUserChannelsIntoDB } = require("./utilities/youtubeTools.js");
+
 app.use(session({ secret: process.env.SESSION_SECRET_KEY }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -20,7 +22,7 @@ app.use(passport.session());
 require("./auth")(connection);
 
 app.get("/", (req, res) => {
-    res.status(200).send("<a href=\"/auth/google\">Authenticate with Google</a>");
+    return res.status(200).send("<a href=\"/auth/google\">Authenticate with Google</a>");
 })
 
 app.get("/auth/google", passport.authenticate("google", {
@@ -32,21 +34,43 @@ app.get("/auth/google", passport.authenticate("google", {
 }))
 
 app.get("/auth/google/failure", (req, res) => {
-    res.status(200).send("Login authentication failed");
+    return res.status(200).send("Login authentication failed");
 })
 
 app.get("/auth/google/callback", passport.authenticate("google"), isLoggedIn, (req, res) => {
-    res.redirect("/dashboard");
+    insertUserChannelsIntoDB(req.user.userID, req.user.accessToken);  
+    return res.redirect("/dashboard");
 })
 
 app.get("/logout", (req, res) => {
     req.logout(console.error);
-    res.send("Logged out")
+    return res.send("Logged out")
 })
 
-app.get("/dashboard", isLoggedIn, (req, res) => {
-    https://www.googleapis.com/youtube/v3/liveStreams
-    res.status(200).send("Dashboard");
+app.get("/api/get-channels", isLoggedIn, async (req, res) => {
+    try {
+        const channels = await getChannels(req.user.accessToken);
+        return res.status(200).json(channels);
+    } catch(err) {
+        console.error(err);
+        return res.status(400);
+    };
+})
+
+app.get("/api/get-recent-live-streams", isLoggedIn, async (req, res) => {
+    try {
+        const channels = await getChannels(req.user.accessToken);
+        if (channels.length == 0) return res.status(404);
+        const recentLiveStreams = await getRecentLiveStreams(channels[0]["id"]);
+        return res.status(200).json(recentLiveStreams);
+    } catch(err) {
+        console.error(err);
+        return res.status(400).json([]);
+    };
+})
+
+app.get("/api/insert-channels", isLoggedIn, async (req, res) => {
+    return (await insertUserChannelsIntoDB(req.user.userID, req.user.accessToken)) ? res.status(200).send(200) : res.status(400).send(400);
 })
 
 app.listen(PORT, () => {
