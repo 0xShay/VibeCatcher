@@ -5,19 +5,29 @@
 // Importing necessary modules
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-// Defining API service class
 export class ApiService {
   private readonly httpClient: AxiosInstance;
 
   constructor(baseURL: string) {
     this.httpClient = axios.create({
       baseURL,
+      withCredentials: true, // Enable sending cookies over cross-domain requests
       headers: {
         'Content-Type': 'application/json',
       },
     });
+  }
 
+  public getChannels(): Promise<AxiosResponse> {
+    return this.httpClient.get("/api/get-channels");
+  }
 
+  public getRecentLiveStreams(): Promise<AxiosResponse> {
+    return this.httpClient.get("/api/get-recent-live-streams");
+  }
+
+  public insertChannels(): Promise<AxiosResponse> {
+    return this.httpClient.get("/api/insert-channels");
   }
 
   public get<T = any>(url: string, params?: object): Promise<AxiosResponse<T>> {
@@ -35,13 +45,8 @@ export class ApiService {
   public delete<T = any>(url: string): Promise<AxiosResponse<T>> {
     return this.httpClient.delete<T>(url);
   }
-
-  // Add more methods as needed
 }
 
-// You can export a singleton instance or create a new instance where needed
-const BASE_URL = 'https://your.api.url.here'; // Replace with your actual API base URL
-
-// Exporting a singleton instance of ApiService
+const BASE_URL = 'http://localhost:3000';
 const apiService = new ApiService(BASE_URL);
 export default apiService;
