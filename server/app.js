@@ -72,7 +72,7 @@ const mockStreamAnalyticsData = {
     }
 };
 
-app.get('/stream-analytics', (req, res) => {
+app.get('/api/stream-analytics', (req, res) => {
     res.status(200).json(mockStreamAnalyticsData); 
 });
 
