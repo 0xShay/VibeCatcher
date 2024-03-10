@@ -73,6 +73,15 @@ app.get("/api/insert-channels", isLoggedIn, async (req, res) => {
     return (await insertUserChannelsIntoDB(req.user.userID, req.user.accessToken)) ? res.status(200).send(200) : res.status(400).send(400);
 })
 
+app.get("/api/get-user-data", isLoggedIn, async (req, res) => {
+    return res.json({
+        userID: req.user.userID,
+        displayName: req.user.displayName,
+        credits: req.user.credits,
+        publicKey: req.user.publicKey
+    })
+})
+
 //getStreamAnalytics Mock get endpoint
 const mockStreamAnalyticsData = {
     "timestamp": Date.now(),
