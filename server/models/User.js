@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     credits : Number,
     accessToken: String,
     refreshToken: String,
-    publicKey: Buffer,
+    publicKey: String,
     secretKey: Buffer
 });
 module.exports = mongoose.model("User", userSchema);

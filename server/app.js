@@ -82,12 +82,12 @@ const mockStreamAnalyticsData = {
       "graph": [0,0.4,1,-0.2,1,0],
       "comments": 200
     }
-  };
+};
 
 app.get('/stream-analytics', (req, res) => {
     res.status(200).json(mockStreamAnalyticsData); 
-  });
+});
 
-app.listen(PORT, () => {
-    console.log("App is running on port " + PORT);
+app.listen(config["port"], () => {
+    console.log("App is running on port " + config["port"]);
 })
