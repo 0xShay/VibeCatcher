@@ -19,6 +19,7 @@ export class ApiService {
       },
     });
   }
+<<<<<<< HEAD
 
   public login() {
     window.location.href = `${BASE_URL}/auth/google`;
@@ -26,6 +27,19 @@ export class ApiService {
 
   public async logout(): Promise<AxiosResponse> {
     return this.httpClient.get("/api/logout");
+=======
+  
+  public getUserData(): Promise<AxiosResponse> {
+    return this.httpClient.get("/api/get-user-data");
+  }
+
+  public getStreamAnalytics(): Promise<AxiosResponse> {
+    return this.httpClient.get("/api/stream-analytics");
+  }
+
+  public login() {
+    window.location.href = `${BASE_URL}/auth/google`;
+>>>>>>> 7c79c983e79b7a6f8d09181bc487a46f03f008ce
   }
 
   public getChannels(): Promise<AxiosResponse> {
@@ -38,6 +52,7 @@ export class ApiService {
 
   public insertChannels(): Promise<AxiosResponse> {
     return this.httpClient.get("/api/insert-channels");
+<<<<<<< HEAD
   }
 
   public async getUserData(): Promise<AxiosResponse> {
@@ -46,6 +61,8 @@ export class ApiService {
 
   public async getStreamAnalytics(streamId: string): Promise<AxiosResponse> {
     return this.httpClient.get(`/api/stream-analytics/${streamId}`);
+=======
+>>>>>>> 7c79c983e79b7a6f8d09181bc487a46f03f008ce
   }
 
   public get<T = any>(url: string, params?: object): Promise<AxiosResponse<T>> {

@@ -2,6 +2,8 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const mongoose = require("mongoose");
 
+const paymentTools = require("./utilities/paymentTools.js");
+
 const User = require("./models/User");
 
 module.exports = (connection) => {
@@ -15,17 +17,26 @@ module.exports = (connection) => {
             userID: profile.id
         }).then((user) => {
             if (!user) {
+                let keypair = paymentTools.generateKeypair();
                 newUser = new User({
                     userID: profile.id,
                     email: profile.email,
                     displayName: profile.displayName,
-                    credits: 0
+                    credits: 0,
+                    accessToken: accessToken,
+                    refreshToken: refreshToken,
+                    publicKey: keypair.publicKey.toString(),
+                    secretKey: Buffer.from(keypair.secretKey)
                 });
-                newUser.save().catch((err) => { console.error("l24 auth: " + err); return done(err); });
+                newUser.save().catch((err) => { return done(err); });
                 user = newUser;
+            } else {
+                user.accessToken = accessToken;
+                user.refreshToken = refreshToken;
+                user.save().catch((err) => { return done(err); })
             };
             return done(null, user);
-        }).catch((err) => { console.error("l44 auth: " + err); return done(err); });
+        }).catch((err) => { return done(err); });
     }))
     
     passport.serializeUser((user, done) => {
@@ -41,6 +52,6 @@ module.exports = (connection) => {
             } else {
                 return done(null, user);
             }
-        }).catch((err) => { console.error("l44 auth: " + err); return done(err); });
+        }).catch((err) => { return done(err); });
     })
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import Chart from 'chart.js/auto';
-import ChartComponent from './chartComponent';
+import ChartComponent from './ChartComponent';
 
 
 const About: React.FC = () => {

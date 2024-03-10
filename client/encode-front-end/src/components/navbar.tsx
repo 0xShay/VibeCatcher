@@ -3,8 +3,12 @@
 // Importing necessary modules
 
 import React from "react";
+<<<<<<< HEAD
 import { useAuth } from "../context/AuthContext";
 
+=======
+import { AuthProvider, useAuth } from "../context/AuthContext";
+>>>>>>> 7c79c983e79b7a6f8d09181bc487a46f03f008ce
 // Defining Navbar component (TypeScript)
 const Navbar: React.FC = () => {
 
