@@ -42,6 +42,10 @@ app.get("/auth/google/callback", passport.authenticate("google"), isLoggedIn, (r
     return res.redirect("/dashboard");
 })
 
+app.get("/api/is-logged-in", (req, res) => {
+    return res.status(200).send(req.user ? true : false);
+})
+
 app.get("/logout", (req, res) => {
     req.logout(console.error);
     return res.send("Logged out")
