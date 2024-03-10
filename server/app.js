@@ -1,4 +1,3 @@
-PORT = 3000;
 
 const config = require("./config.json");
 const PORT = 3000;
