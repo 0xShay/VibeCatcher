@@ -2,24 +2,29 @@
 // This file contains Login component
 
 // Example Login component
-import React from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useEffect } from 'react';
+import apiService from '../services/apiService';
 
 const Login: React.FC = () => {
-  const { login } = useAuth();
-  
-  const handleLogin = () => {
-    // Perform authentication (e.g., API call to validate credentials)
-    // If successful:
-    login();
-    // Redirect to dashboard or desired authenticated route
-  };
-
-  return (
-    <div>
-      <button onClick={handleLogin}>Login</button>
-    </div>
-  );
-};
+    useEffect(() => {
+        const fetchChannels = async () => {
+          try {
+            const response = await apiService.getChannels();
+            console.log(response.data);
+            // Process the channels data, maybe store in local storage or state
+          } catch (error) {
+            console.error('Failed to fetch channels:', error);
+          }
+        };
+    
+        fetchChannels();
+      }, []);
+    
+      return (
+        <div>
+          {/* Render UI elements based on fetched channels */}
+        </div>
+      );
+    };
 
 export default Login;

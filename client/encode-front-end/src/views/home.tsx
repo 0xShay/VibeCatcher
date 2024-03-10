@@ -16,11 +16,7 @@ const HomePage: React.FC = () => {
   return (
     <>
       <Navbar />
-      <Landing />
-      <Landingend />
-      <About />
-      <Contacts />
-      <Footer />
+
     </>
   );
 };

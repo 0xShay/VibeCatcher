@@ -3,7 +3,11 @@
 // Importing necessary modules
 
 import React from "react";
+
 import { AuthProvider, useAuth } from "../context/AuthContext";
+
+import { useAuth } from "../context/AuthContext";
+
 // Defining Navbar component (TypeScript)
 const Navbar: React.FC = () => {
 
@@ -37,10 +41,14 @@ const Navbar: React.FC = () => {
           </a>
         </div>
         <div className="flex w-1/5 justify-center items-start font-bold">
-
-          <button onClick={loginViaGoogle} className="text-white hover:text-gray-400 pr-10">
-            Login
-          </button>
+        
+        {isAuthenticated ? (
+            // Show Logout button if authenticated
+            <button onClick={loginViaGoogle} className="text-white hover:text-gray-400 pr-10">Logout</button>
+          ) : (
+            // Show Login button if not authenticated
+            <button onClick={loginViaGoogle} className="text-white hover:text-gray-400 pr-10">Login</button>
+          )}
           <button className="text-white">
             Get notified
           </button>
