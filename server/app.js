@@ -90,4 +90,4 @@ app.get('/stream-analytics', (req, res) => {
 
 app.listen(config["port"], () => {
     console.log("App is running on port " + config["port"]);
-})
+});
