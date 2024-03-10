@@ -4,9 +4,12 @@ const PORT = 3000;
 const path = require('path');
 const mongoose = require("mongoose");
 const connection = mongoose.connect(process.env.MONGO_CONNECTION_URL);
-
+const sentimentAnalyser = require('./utilities/sentimentAnalysis');
+const cors = require('cors');
 const express = require("express");
 const app = express();
+
+app.use(cors());
 
 const session = require("express-session");
 const passport = require("passport");
@@ -88,6 +91,17 @@ app.get("/api/get-recent-live-streams", isLoggedIn, async (req, res) => {
         return res.status(400).json([]);
     };
 })
+
+app.post('/analyzeSentiment', async (req, res) => {
+    const { streamID, timestamp, messages } = req.body;
+    try {
+        const sentimentScore = await sentimentAnalyser(streamID, timestamp, messages);
+        res.json({ sentimentScore });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 app.get("/api/insert-channels", isLoggedIn, async (req, res) => {
     return (await insertUserChannelsIntoDB(req.user.userID, req.user.accessToken)) ? res.status(200).send(200) : res.status(400).send(400);
