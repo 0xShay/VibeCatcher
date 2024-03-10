@@ -1,3 +1,5 @@
+PORT = 3000;
+
 const config = require("./config.json");
 const PORT = 3000;
 const path = require('path');
@@ -19,6 +21,7 @@ const { getChannels, getRecentLiveStreams, insertUserChannelsIntoDB } = require(
 app.use(session({ secret: process.env.SESSION_SECRET_KEY }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static("../client"));
 
 require("./auth")(connection);
 
@@ -33,6 +36,10 @@ app.get("/auth/google", passport.authenticate("google", {
         "https://www.googleapis.com/auth/youtube.readonly"
     ]
 }))
+
+app.get("/sentiment-test", async (req, res) => {
+    res.status(200).json(await require("./utilities/sentimentAnalysis")());
+})
 
 app.get("/auth/google/failure", (req, res) => {
     return res.status(200).send("Login authentication failed");
@@ -51,6 +58,11 @@ app.get("/logout", (req, res) => {
 app.get("/dashboard", isLoggedIn, (req, res) => {
     https://www.googleapis.com/youtube/v3/liveStreams
     res.status(200).send("Dashboard");
+})
+
+app.get("/sentiment", (req, res) => {
+    require("./utilities/sentimentAnalysis")();
+    res.status(200).send("Sentiment");
 })
 
 app.listen(PORT, () => {
