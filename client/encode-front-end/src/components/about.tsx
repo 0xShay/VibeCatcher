@@ -1,6 +1,5 @@
 import React from 'react'
 import Chart from 'chart.js/auto';
-import ChartComponent from './ChartComponent';
 
 
 const About: React.FC = () => {
@@ -16,7 +15,7 @@ const About: React.FC = () => {
             One app to replace all of your streaming analytics through sentiment analysis
           </h2>
           <div className='DashBoard flex justify-center pt-10'>
-          <ChartComponent/>
+          {/* <ChartComponent/> */}
           </div>
         </div>
       </div>
