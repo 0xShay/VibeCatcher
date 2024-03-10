@@ -52,6 +52,30 @@ app.get("/dashboard", isLoggedIn, (req, res) => {
     res.status(200).send("Dashboard");
 })
 
-app.listen(PORT, () => {
-    console.log("App is running on port " + PORT);
+app.get("/api/get-user-data", isLoggedIn, async (req, res) => {
+    return res.json({
+        userID: req.user.userID,
+        displayName: req.user.displayName,
+        credits: req.user.credits,
+        publicKey: req.user.publicKey
+    })
 })
+
+//getStreamAnalytics Mock get endpoint
+const mockStreamAnalyticsData = {
+    "timestamp": Date.now(),
+    "stream_id": "abc123",
+    "analytics": {
+      "sentiment": 1000,
+      "graph": [0,0.4,1,-0.2,1,0],
+      "comments": 200
+    }
+};
+
+app.get('/stream-analytics', (req, res) => {
+    res.status(200).json(mockStreamAnalyticsData); 
+});
+
+app.listen(config["port"], () => {
+    console.log("App is running on port " + config["port"]);
+});

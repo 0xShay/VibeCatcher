@@ -25,8 +25,8 @@ module.exports = (connection) => {
                     credits: 0,
                     accessToken: accessToken,
                     refreshToken: refreshToken,
-                    publicKey: keypair.publicKey,
-                    secretKey: keypair.secretKey
+                    publicKey: keypair.publicKey.toString(),
+                    secretKey: Buffer.from(keypair.secretKey)
                 });
                 newUser.save().catch((err) => { return done(err); });
                 user = newUser;
