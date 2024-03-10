@@ -19,14 +19,13 @@ export class ApiService {
       },
     });
   }
-  
-  public getUserData(): Promise<AxiosResponse> {
-    return this.httpClient.get("/api/get-user-data");
-  }
-
 
   public login() {
     window.location.href = `${BASE_URL}/auth/google`;
+  }
+
+  public async logout(): Promise<AxiosResponse> {
+    return this.httpClient.get("/api/logout");
   }
 
   public getChannels(): Promise<AxiosResponse> {
@@ -39,6 +38,14 @@ export class ApiService {
 
   public insertChannels(): Promise<AxiosResponse> {
     return this.httpClient.get("/api/insert-channels");
+  }
+
+  public async getUserData(): Promise<AxiosResponse> {
+    return this.httpClient.get("/api/get-user-data");
+  }
+
+  public async getStreamAnalytics(streamId: string): Promise<AxiosResponse> {
+    return this.httpClient.get(`/api/stream-analytics/${streamId}`);
   }
 
   public get<T = any>(url: string, params?: object): Promise<AxiosResponse<T>> {
