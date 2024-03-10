@@ -8,6 +8,7 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 const BASE_URL = 'http://localhost:3000';
 
 export class ApiService {
+  [x: string]: any;
   private readonly httpClient: AxiosInstance;
 
   constructor(baseURL: string) {

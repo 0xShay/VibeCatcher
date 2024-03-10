@@ -17,7 +17,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    apiService.getUserData().then(response => {
+    apiService.getUserData().then((response: { data: any; }) => {
       setIsAuthenticated(true);
       setUser(response.data);
     }).catch(() => {
@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
 
       window.location.href = '/';
-    }).catch(error => console.error('Logout failed', error));
+    }).catch((error: any) => console.error('Logout failed', error));
   };
 
   return (

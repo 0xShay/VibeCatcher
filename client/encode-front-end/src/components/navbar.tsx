@@ -6,7 +6,6 @@ import React from "react";
 
 import { AuthProvider, useAuth } from "../context/AuthContext";
 
-import { useAuth } from "../context/AuthContext";
 
 // Defining Navbar component (TypeScript)
 const Navbar: React.FC = () => {
