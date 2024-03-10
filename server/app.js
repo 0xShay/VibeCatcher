@@ -4,12 +4,16 @@ const PORT = 3000;
 const path = require('path');
 const mongoose = require("mongoose");
 const connection = mongoose.connect(process.env.MONGO_CONNECTION_URL);
-const sentimentAnalyser = require('./utilities/sentimentAnalysis');
+const { sentimentAnalyser } = require('./utilities/sentimentAnalysis.js');
 const cors = require('cors');
 const express = require("express");
 const app = express();
 
 app.use(cors());
+
+let globalStreamId;
+let globalLastMessageTimestamp;
+let globalMessages;
 
 const session = require("express-session");
 const passport = require("passport");
@@ -19,7 +23,7 @@ function isLoggedIn(req, res, next) {
 }
 app.use(express.static('public'));
 const { getChannels, getRecentLiveStreams, insertUserChannelsIntoDB } = require("./utilities/youtubeTools.js");
-
+app.use(express.json());
 app.use(session({ secret: process.env.SESSION_SECRET_KEY }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -38,10 +42,6 @@ app.get("/auth/google", passport.authenticate("google", {
         "https://www.googleapis.com/auth/youtube.readonly"
     ]
 }))
-
-app.get("/sentiment-test", async (req, res) => {
-    res.status(200).json(await require("./utilities/sentimentAnalysis")());
-})
 
 app.get("/auth/google/failure", (req, res) => {
     return res.status(200).send("Login authentication failed");
@@ -92,16 +92,19 @@ app.get("/api/get-recent-live-streams", isLoggedIn, async (req, res) => {
     };
 })
 
-app.post('/analyzeSentiment', async (req, res) => {
+app.post('/sentimentAnalysis', async (req, res) => {
     const { streamID, timestamp, messages } = req.body;
+
     try {
+        
         const sentimentScore = await sentimentAnalyser(streamID, timestamp, messages);
-        res.json({ sentimentScore });
+        res.json({ sentimentScore: sentimentScore });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 app.get("/api/insert-channels", isLoggedIn, async (req, res) => {
     return (await insertUserChannelsIntoDB(req.user.userID, req.user.accessToken)) ? res.status(200).send(200) : res.status(400).send(400);

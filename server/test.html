@@ -447,30 +447,39 @@ async function pollNewMessages(liveChatId, liveStreamId) {
       : "No messages";
 
     // Log the array of messages and last timestamp
-    console.log([messages, lastMessageTimestamp]);
+    console.log([liveStreamId, lastMessageTimestamp, messages]);
 
     // If sentimentAnalyser is an async function, await its result
     var sentimentScore = await analyzeChatSentiment(liveStreamId, lastMessageTimestamp, messages);
     console.log(sentimentScore);
 
     // Continue polling for new messages every 30 seconds
-    setTimeout(() => pollNewMessages(liveChatId), 30000);
+    setTimeout(() => pollNewMessages(liveChatId, liveStreamId), 30000);
 
     // Return the array of messages and the last timestamp
-    return [liveStreamId,lastMessageTimestamp, lastMessageTimestamp];
+    // return [liveStreamId,lastMessageTimestamp, messages];
+    return {
+      liveStream: liveStreamId,
+      timestamp: lastMessageTimestamp,
+      messages: messages
+    };
   } catch (error) {
     console.error('Error fetching messages:', error);
   }
 }
 
-async function analyzeChatSentiment(streamID, timestamp, messages) {
+async function analyzeChatSentiment(liveStreamId, lastMessageTimestamp, messages) {
     try {
-        const response = await fetch('/analyzeSentiment', {
+        const response = await fetch('http://localhost:3000/sentimentAnalysis', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ streamID, timestamp, messages }),
+            body: JSON.stringify({ 
+                streamID: liveStreamId,
+                timestamp: lastMessageTimestamp,
+                messages: messages
+             }),
         });
 
         if (!response.ok) {

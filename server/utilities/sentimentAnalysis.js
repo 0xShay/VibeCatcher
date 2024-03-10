@@ -1,36 +1,27 @@
-// Imports the Google Cloud client library
+// Imports
 const language = require('@google-cloud/language');
+const mongoose = require("mongoose");
+const ChatAnalytic = require("../models/ChatAnalytic");
 
 // Instantiates a client
 const client = new language.LanguageServiceClient();
 
-const mongoose = require("mongoose");
-
-const ChatAnalytic = require("../models/ChatAnalytic");
-
-// The text messages to analyze
-
-var chatMessages;
-var chatTimeStamp;
-var userStreamID;
-var averageSentimentScore;
-
+// The sentiment analysis function
 async function sentimentAnalyser(givenStreamID, givenTimestamp, messages) {
   let totalSentimentScore = 0;
   let nonIgnoredMessages = 0;
 
-  for (let i = 0; i < messages.length; i++) {
+  for (let message of messages) {
       const liveChatMessage = {
-          content: messages[i],
+          content: message,
           type: 'PLAIN_TEXT',
       };
 
-      // Detects the sentiment of the text
       try {
         const [result] = await client.analyzeSentiment({document: liveChatMessage});
         const sentiment = result.documentSentiment;
 
-        console.log(`Text: ${messages[i]}`);
+        console.log(`Text: ${message}`);
         console.log(`Sentiment score: ${sentiment.score}`);
 
         totalSentimentScore += sentiment.score;
@@ -42,19 +33,28 @@ async function sentimentAnalyser(givenStreamID, givenTimestamp, messages) {
       }
   }
 
-  averageSentimentScore = totalSentimentScore / nonIgnoredMessages;
-  console.log(`Average Stream Sentiment Score: ${averageSentimentScore}`);
-  return averageSentimentScore;
+  if (nonIgnoredMessages > 0) {
+    const averageSentimentScore = totalSentimentScore / nonIgnoredMessages;
+    console.log(`Average Stream Sentiment Score: ${averageSentimentScore}`);
+    return averageSentimentScore; // Return the average score
+  } else {
+    return null; // Return null or an appropriate value if no messages were processed
+  }
 }
 
-module.exports =  async function(){
-    await sentimentAnalyser(userStreamID, chatTimeStamp, chatMessages).catch(console.error);
-    let newCA = new ChatAnalytic({
-        streamID: userStreamID,
-        timestamp: chatTimeStamp,
-        sentimentScore: averageSentimentScore
-    });
-    newCA.save().catch((err) => { console.error(err); });
-    
-    console.log("added");
+// Exports the function
+module.exports.sentimentAnalyser = async function(givenStreamID, givenTimestamp, messages) {
+    const averageSentimentScore = await sentimentAnalyser(givenStreamID, givenTimestamp, messages).catch(console.error);
+    if (averageSentimentScore !== null) { // Check if there is a calculated score
+        let newCA = new ChatAnalytic({
+            streamID: givenStreamID,
+            timestamp: givenTimestamp,
+            sentimentScore: averageSentimentScore
+        });
+        newCA.save().catch(console.error);
+        
+        console.log("Analysis added to database");
+    } else {
+        console.log("No valid sentiment score to add to database");
+    }
 };
