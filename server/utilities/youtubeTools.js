@@ -22,28 +22,6 @@ async function getChannels(accessToken) {
     return response.data?.items;
 }
 
-// retrieve recent live streams as a list, given a channelID which has been authorized
-async function getRecentLiveStreams(channelID) {
-    try {
-        try {
-            const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
-                params: {
-                    part: 'snippet',
-                    channelId: `${channelID}`,
-                    key: process.env.GOOGLE_API_KEY,
-                },
-            });
-            return response.data.items;
-        } catch (error) {
-            console.error('Error fetching live streams:', error.message);
-            return [];
-        }
-    } catch (err) {
-        console.error(err);
-        return [];
-    }
-}
-
 // insert any non-yet existing user-channel ID records into the database
 async function insertUserChannelsIntoDB(userID, accessToken) {
     const channels = await getChannels(accessToken);
@@ -64,6 +42,18 @@ async function insertUserChannelsIntoDB(userID, accessToken) {
         };
     };
     return true;
+}
+
+async function getRecentLiveStreams(accessToken, channelID) {
+
+    try {
+        const response = await axios.get(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&eventType=completed&maxResults=25&type=video&channelId=${channelID}&key=${process.env.GOOGLE_API_KEY}`);
+        return response.data.items;
+    } catch (error) {
+        console.error('Error fetching live streams:', error.message);
+        return [];
+    }
+
 }
 
 module.exports = { getChannels, getRecentLiveStreams, insertUserChannelsIntoDB };
