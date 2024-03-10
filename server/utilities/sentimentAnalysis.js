@@ -9,24 +9,10 @@ const mongoose = require("mongoose");
 const ChatAnalytic = require("../models/ChatAnalytic");
 
 // The text messages to analyze
-var messages = [
-  '여러 나라 사람들 다모였농', 
-  'memory keeps u attached with person i blesses to have poor memory', 
-  '@Alchemist hm aur batao', 
-  '@kate would you like to share about yourself', 
-  '@Arif yep <3', 
-  '@Rishab time waste?', 
-  'Tata bye bye !', 
-  '@cherry hey supp!!', 
-  'nandyaa kadhi yenar parat', 
-  'انت توجيهي ياا منير', 
-  'Oh?', 
-  'ye to lar bi nhi rhi', 
-  'Lilly 🍫'
-];
 
-const timestamp1 = Date.now();
-const streamID1 = "1234567890";
+var chatMessages;
+var chatTimeStamp;
+var userStreamID;
 var averageSentimentScore;
 
 async function sentimentAnalyser(givenStreamID, givenTimestamp, messages) {
@@ -58,13 +44,14 @@ async function sentimentAnalyser(givenStreamID, givenTimestamp, messages) {
 
   averageSentimentScore = totalSentimentScore / nonIgnoredMessages;
   console.log(`Average Stream Sentiment Score: ${averageSentimentScore}`);
+  return averageSentimentScore;
 }
 
 module.exports =  async function(){
-    await sentimentAnalyser(streamID1, timestamp1, messages).catch(console.error);
+    await sentimentAnalyser(userStreamID, chatTimeStamp, chatMessages).catch(console.error);
     let newCA = new ChatAnalytic({
-        streamID: streamID1,
-        timestamp: timestamp1,
+        streamID: userStreamID,
+        timestamp: chatTimeStamp,
         sentimentScore: averageSentimentScore
     });
     newCA.save().catch((err) => { console.error(err); });

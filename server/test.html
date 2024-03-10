@@ -391,9 +391,11 @@ function handleChatIdClick(url) { // Make sure to pass the URL parameter when ca
 <button onclick="handleChatIdClick()">get live chat messages</button>
 
 <script>
+  const {sentimentAnalyser} = require("./utilities/sentimentAnalysis.js");
   let apiKey = "AIzaSyDJE7qeUovuMAOyzUtqTUsOH5BA3wFOemI";
   let clientId = "203431130708-27lidge60ealhtq5e06133moddjol6p5.apps.googleusercontent.com";
   let nextPageToken = "";
+  const urlObj = "";
 
   function authenticate() {
     return gapi.auth2.getAuthInstance()
@@ -421,6 +423,7 @@ function handleChatIdClick(url) { // Make sure to pass the URL parameter when ca
     }).then(function(response) {
       return response.result.items[0].liveStreamingDetails.activeLiveChatId;
     });
+
   }
 
   function getLiveChatMessages(liveChatId) {
@@ -444,6 +447,8 @@ function handleChatIdClick(url) { // Make sure to pass the URL parameter when ca
 
     // Log the array of messages and last timestamp
     console.log([messages, lastMessageTimestamp]);
+    var sentimentScore = sentimentAnalyser(urlObj, lastMessageTimestamp, messages);
+    console.log(sentimentScore);
 
     // Continue polling for new messages every 30 seconds
     setTimeout(() => pollNewMessages(liveChatId), 30000);
