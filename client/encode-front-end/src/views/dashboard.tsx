@@ -1,56 +1,49 @@
 // File: client/encode-front-end/src/views/dashboard.tsx
 // This file contains dashboard view
 // Importing necessary modules 
-import React from 'react'
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom at the top
-import { LineChart } from '../components/LineChart';
-import { ISentimentScore } from '../interfaces/ChartData';
-import { PieChartProps } from '../interfaces/ChartData';
-import { DataTable } from '../components/DataTable';
-import { PieChart } from '../components/PieChart';
 
+
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { LineChart } from '../components/LineChart';
+import { PieChart } from '../components/PieChart';
+import { DataTable } from '../components/DataTable';
+import apiService from '../services/apiService';
+import { ISentimentScore, PieChartProps } from '../interfaces/ChartData';
 
 // Defining Dashboard component (TypeScript)
 const Dashboard: React.FC = () => {
-    // Simulated dynamic data
-    const sentimentScores: ISentimentScore[] = [
-        { timestamp: 'January', score: 0.3 },
-        { timestamp: 'February', score: 0.6 },
-        { timestamp: 'March', score: 0.4 },
-        { timestamp: 'April', score: 0.5 },
-        { timestamp: 'May', score: 0.7 },
-        { timestamp: 'June', score: 0.2 },
-        { timestamp: 'July', score: 0.8 },
-    ];
-    const sentimentLabels: { timestamp: string; label: string; }[] = [
-        { timestamp: 'January', label: 'Neutral' },
-        { timestamp: 'February', label: 'Positive' },
-        { timestamp: 'March', label: 'Negative' },
-        // Continue as needed
-    ];
-    // Transform sentimentLabels into a format suitable for the PieChart
-    const sentimentLabelCounts = sentimentLabels.reduce((acc, { label }) => {
-        acc[label] = (acc[label] || 0) + 1;
-        return acc;
-    }, {} as { [key: string]: number });
+    const [sentimentScores, setSentimentScores] = useState<ISentimentScore[]>([]);
+    const [pieChartData, setPieChartData] = useState<PieChartProps['sentimentLabels']>([]);
+    const [detailedSentimentData, setDetailedSentimentData] = useState<ISentimentScore[]>([]);
 
-    const pieChartData = Object.keys(sentimentLabelCounts).map(label => ({
-        label,
-        count: sentimentLabelCounts[label],
-    }));
+    useEffect(() => {
+        // Example: Fetch recent live streams and perform sentiment analysis
+        apiService.getRecentLiveStreams().then((response) => {
+            // Assume the response contains live stream data
+            const liveStreams = response.data;
+            if (liveStreams.length > 0) {
+                const streamId = liveStreams[0].id; // Just an example to get the first stream ID
+                // Perform sentiment analysis (You need to adjust this part according to your actual data structure)
+                apiService.performSentimentAnalysis(streamId, Date.now(), ["message1", "message2"]).then((analysisResponse) => {
+                    // Set state with fetched data
+                    // This is just a placeholder, will replace it with actual data
+                    const sentimentAnalysisResult = analysisResponse.data;
+                    setSentimentScores(sentimentAnalysisResult.sentimentScores);
+                    setPieChartData(sentimentAnalysisResult.pieChartData);
+                    setDetailedSentimentData(sentimentAnalysisResult.detailedSentimentData);
+                });
+            }
+        }).catch((error) => {
+            console.error("Failed to fetch live streams or perform sentiment analysis:", error);
+        });
+    }, []);
 
-    // Example detailed sentiment analysis data
-    const detailedSentimentData = [
-        { timestamp: '2021-01-01', score: 0.8, label: 'Positive' },
-        // Add more data as needed
-    ];
-
-    
     return (
         <div className="flex flex-grow min-h-screen bg-gradient-to-bl from-darkBlue to-trueBlack text-gray-300">
-            {/* Mock navbar */}
+            {/* Content including Navbar, LineChart, PieChart, and DataTable */}
             <div className="w-40 lg:w-64 bg-gray-700 text-white py-4">
-                <h2 className="text-lg font-semibold px-4 mb-4">Dashboard</h2>
+            <h2 className="text-lg font-semibold px-4 mb-4">Dashboard</h2>
                 <ul className="flex flex-col space-y-2">
                     <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Analytics Overview</li>
                     <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Sentiment Analysis</li>
@@ -64,7 +57,6 @@ const Dashboard: React.FC = () => {
                     <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Logout</li>
                 </ul>
             </div>
-
             <div className="flex-grow p-5 space-y-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
@@ -76,15 +68,13 @@ const Dashboard: React.FC = () => {
                         <PieChart sentimentLabels={pieChartData} />
                     </div>
                 </div>
-               {/* Detailed Sentiment Analysis Table */}
-               <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-                <h3 className="text-lg font-semibold mb-4">Detailed Sentiment Analysis</h3>
-                <DataTable data={detailedSentimentData} />
-            </div>
+                <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 className="text-lg font-semibold mb-4">Detailed Sentiment Analysis</h3>
+                    {/* <DataTable  /> */}
+                </div>
             </div>
         </div>
     );
 };
 
-// Exporting Dashboard component
 export default Dashboard;
