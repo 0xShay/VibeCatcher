@@ -26,7 +26,7 @@ module.exports = (connection) => {
                     accessToken: accessToken,
                     refreshToken: refreshToken,
                     publicKey: keypair.publicKey.toString(),
-                    secretKey: keypair.secretKey
+                    secretKey: Buffer.from(keypair.secretKey)
                 });
                 newUser.save().catch((err) => { return done(err); });
                 user = newUser;
