@@ -3,15 +3,20 @@
 // Importing necessary modules
 
 import React from "react";
-
+import { AuthProvider, useAuth } from "../context/AuthContext";
 // Defining Navbar component (TypeScript)
 const Navbar: React.FC = () => {
+
+  const {isAuthenticated, login} = useAuth();
 
   const loginViaGoogle = () => {
     // Redirection to Google OAuth flow
 
     const url = "http://localhost:3000/auth/google";
+    login();
+    if(isAuthenticated)
     window.location.href = url;
+    if(isAuthenticated) console.log("hellooooo")
   }
 
   return (

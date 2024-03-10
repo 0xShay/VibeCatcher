@@ -1,17 +1,19 @@
 // File: client/encode-front-end/src/views/dashboard.tsx
 // This file contains dashboard view
 // Importing necessary modules 
-import React from 'react'
+import React, { MouseEventHandler } from 'react'
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom at the top
 import { LineChart } from '../components/LineChart';
 import { ISentimentScore } from '../interfaces/ChartData';
 import { PieChartProps } from '../interfaces/ChartData';
 import { DataTable } from '../components/DataTable';
 import { PieChart } from '../components/PieChart';
+import { useAuth } from '../context/AuthContext';
 
 
 // Defining Dashboard component (TypeScript)
 const Dashboard: React.FC = () => {
+    const { isAuthenticated, logout } = useAuth();
     // Simulated dynamic data
     const sentimentScores: ISentimentScore[] = [
         { timestamp: 'January', score: 0.3 },
@@ -19,7 +21,7 @@ const Dashboard: React.FC = () => {
         { timestamp: 'March', score: 0.4 },
         { timestamp: 'April', score: 0.5 },
         { timestamp: 'May', score: 0.7 },
-        { timestamp: 'June', score: 0.2 },
+        { timestamp: 'June', score: -0.8 },
         { timestamp: 'July', score: 0.8 },
     ];
     const sentimentLabels: { timestamp: string; label: string; }[] = [
@@ -46,11 +48,18 @@ const Dashboard: React.FC = () => {
     ];
 
     
-    return (
-        <div className="flex flex-grow min-h-screen bg-gradient-to-bl from-darkBlue to-trueBlack text-gray-300">
+    function handleLogout() {
+        const url = "http://localhost:5173/"
+        logout();
+        window.location.href = url;
+
+    }
+
+    return  ( /*isAuthenticated && */
+        <div className="flex flex-grow min-h-screen bg-gradient-to-bl from-darkBlue to-trueBlack text-gray-300 bg-slate-900">
             {/* Mock navbar */}
             <div className="w-40 lg:w-64 bg-gray-700 text-white py-4">
-                <h2 className="text-lg font-semibold px-4 mb-4">Dashboard</h2>
+                <h2 className="text-lg font-semibold px-4 mb-4">Dashboard  {isAuthenticated && "Hi"}</h2>
                 <ul className="flex flex-col space-y-2">
                     <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Analytics Overview</li>
                     <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Sentiment Analysis</li>
@@ -61,7 +70,7 @@ const Dashboard: React.FC = () => {
                     </li>
                     <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Settings</li>
                     <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Profile</li>
-                    <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer">Logout</li>
+                    <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer" onClick={handleLogout}>Logout</li>
                 </ul>
             </div>
 
@@ -84,7 +93,12 @@ const Dashboard: React.FC = () => {
             </div>
         </div>
     );
+    
 };
 
 // Exporting Dashboard component
 export default Dashboard;
+function useContext(AuthContext: any): { isAuthenticated: any; } {
+    throw new Error('Function not implemented.');
+}
+

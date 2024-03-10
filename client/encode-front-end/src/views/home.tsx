@@ -8,6 +8,7 @@ import Footer from "../components/footer";
 import Landing from "../components/landing";
 import Landingend from "../components/landingend";
 import Navbar from "../components/navbar";
+import { useAuth } from "../context/AuthContext";
 // import css
 
 // Defining Home component (TypeScript)

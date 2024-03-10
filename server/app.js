@@ -39,7 +39,7 @@ app.get("/auth/google/failure", (req, res) => {
 
 app.get("/auth/google/callback", passport.authenticate("google"), isLoggedIn, (req, res) => {
     insertUserChannelsIntoDB(req.user.userID, req.user.accessToken);  
-    return res.redirect("/dashboard");
+    return res.redirect("http://localhost:5173/dashboard");
 })
 
 app.get("/logout", (req, res) => {
