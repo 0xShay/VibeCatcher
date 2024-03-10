@@ -39,12 +39,16 @@ app.get("/auth/google/failure", (req, res) => {
 
 app.get("/auth/google/callback", passport.authenticate("google"), isLoggedIn, (req, res) => {
     insertUserChannelsIntoDB(req.user.userID, req.user.accessToken);  
-    return res.redirect("/dashboard");
+    return res.redirect("/api/get-user-data");
 })
 
-app.get("/logout", (req, res) => {
+app.get("/api/is-logged-in", (req, res) => {
+    return res.status(200).send(req.user ? true : false);
+})
+
+app.get("/api/logout", (req, res) => {
     req.logout(console.error);
-    return res.send("Logged out")
+    return res.status(200).send("Logged out")
 })
 
 app.get("/api/get-channels", isLoggedIn, async (req, res) => {
