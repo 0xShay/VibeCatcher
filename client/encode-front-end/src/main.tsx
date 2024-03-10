@@ -8,13 +8,15 @@ import './index.css'
 import ProtectedRoute from './components/ProtectedRoute.tsx';
 import Payments from './views/Payments';
 import Dashboard from './views/dashboard.tsx'
-import Home from './views/home.tsx'
+import HomePage from './views/home.tsx'
+import { AuthProvider } from './context/AuthContext'; 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
+     <AuthProvider>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="/dashboard" element={
           <ProtectedRoute>
@@ -24,6 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         {/* Define other routes */}
       </Routes>
     </BrowserRouter>
+    </AuthProvider>
   </React.StrictMode>,
 
 );

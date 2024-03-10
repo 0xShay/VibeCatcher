@@ -56,10 +56,10 @@ export const data = {
     },
   ],
 };
-const chartComponent = () => {
+const ChartComponent = () => {
     return <div style={{ width: '700px', height: '500px' }}>
     <Line data={data} options={options} />
   </div>
 }
   
-export default chartComponent;
+export default ChartComponent;

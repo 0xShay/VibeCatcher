@@ -1,6 +1,6 @@
 import React from "react";
 
-const Contacts = () => {
+const Contacts: React.FC = () => {
   return (
     <section id="contact" className="bg-white dark:bg-gray-900">
       <div className="pd-8 lg:py-16 px-4 mx-auto max-w-screen-md">
