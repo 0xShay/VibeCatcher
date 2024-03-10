@@ -44,7 +44,7 @@ async function insertUserChannelsIntoDB(userID, accessToken) {
     return true;
 }
 
-async function getRecentLiveStreams(accessToken, channelID) {
+async function getRecentLiveStreams(channelID) {
 
     try {
         const response = await axios.get(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&eventType=completed&maxResults=25&type=video&channelId=${channelID}&key=${process.env.GOOGLE_API_KEY}`);
