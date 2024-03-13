@@ -1,22 +1,26 @@
+// File: client/encode-front-end/src/main.tsx
+// This file contains main component
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css'
-// import Dashboard from './views/dashboard.tsx'
-import Navbar from './components/navbar.tsx'
-import About from './components/about.tsx'
-import Landing from './components/landing.tsx'
-import Landingend from './components/landingend.tsx'
-import Contacts from './components/contacts.tsx'
-import Footer from './components/footer.tsx'
+import ProtectedRoute from './components/ProtectedRoute.tsx';
+import Payments from './views/Payments';
+import Dashboard from './views/dashboard.tsx'
+import Home from './views/home.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Navbar />
-    <Landing/>
-    <Landingend/>
-    <About/>
-    <Contacts/>
-    <Footer/>
-
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/payments" element={<Payments />} />
+        {/* Define other routes */}
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>,
-)
+
+);
+

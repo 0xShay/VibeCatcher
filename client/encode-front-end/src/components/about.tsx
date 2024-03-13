@@ -6,7 +6,7 @@ import ChartComponent from './chartComponent';
 const About: React.FC = () => {
 
   return (
-    <div>
+    <div id='about'>
       <div className=" bg-gray-900 py-4 w-full">
         <div className="leftSide pt-10">
           <h1 className=" leading-[4rem] text-5xl font-[satoshi] font-bold text-white pt-10 pb-6 align-center text-center mx-auto max-w-[1000px] ">

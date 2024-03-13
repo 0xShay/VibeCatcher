@@ -1,10 +1,19 @@
-const config = require("./config.json");
 
+const config = require("./config.json");
+const PORT = 3000;
+const path = require('path');
 const mongoose = require("mongoose");
 const connection = mongoose.connect(process.env.MONGO_CONNECTION_URL);
-
+const { sentimentAnalyser } = require('./utilities/sentimentAnalysis.js');
+const cors = require('cors');
 const express = require("express");
 const app = express();
+
+app.use(cors());
+
+let globalStreamId;
+let globalLastMessageTimestamp;
+let globalMessages;
 
 const session = require("express-session");
 const passport = require("passport");
@@ -12,12 +21,13 @@ const passport = require("passport");
 function isLoggedIn(req, res, next) {
     req.user ? next() : res.sendStatus(401);
 }
-
+app.use(express.static('public'));
 const { getChannels, getRecentLiveStreams, insertUserChannelsIntoDB } = require("./utilities/youtubeTools.js");
-
+app.use(express.json());
 app.use(session({ secret: process.env.SESSION_SECRET_KEY }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static("../client"));
 
 require("./auth")(connection);
 
@@ -51,6 +61,19 @@ app.get("/api/logout", (req, res) => {
     return res.status(200).send("Logged out")
 })
 
+app.get("/dashboard", isLoggedIn, (req, res) => {
+    https://www.googleapis.com/youtube/v3/liveStreams
+    res.status(200).send("Dashboard");
+})
+
+app.get("/sentiment", (req, res) => {
+    require("./utilities/sentimentAnalysis")();
+    res.status(200).send("Sentiment");
+})
+
+app.listen(PORT, () => {
+    console.log("App is running on port " + PORT);
+})
 app.get("/api/get-channels", isLoggedIn, async (req, res) => {
     try {
         const channels = await getChannels(req.user.accessToken);
@@ -73,34 +96,23 @@ app.get("/api/get-recent-live-streams", isLoggedIn, async (req, res) => {
     };
 })
 
+app.post('/sentimentAnalysis', async (req, res) => {
+    const { streamID, timestamp, messages } = req.body;
+
+    try {
+        
+        const sentimentScore = await sentimentAnalyser(streamID, timestamp, messages);
+        res.json({ sentimentScore: sentimentScore });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
 app.get("/api/insert-channels", isLoggedIn, async (req, res) => {
     return (await insertUserChannelsIntoDB(req.user.userID, req.user.accessToken)) ? res.status(200).send(200) : res.status(400).send(400);
 })
-
-app.get("/api/get-user-data", isLoggedIn, async (req, res) => {
-    return res.json({
-        userID: req.user.userID,
-        displayName: req.user.displayName,
-        credits: req.user.credits,
-        publicKey: req.user.publicKey
-    })
-})
-
-//getStreamAnalytics Mock get endpoint
-const mockStreamAnalyticsData = {
-    "timestamp": Date.now(),
-    "stream_id": "abc123",
-    "analytics": {
-      "sentiment": 1000,
-      "graph": [0,0.4,1,-0.2,1,0],
-      "comments": 200
-    }
-};
-
-app.get('/stream-analytics', (req, res) => {
-    res.status(200).json(mockStreamAnalyticsData); 
-});
-
-app.listen(config["port"], () => {
-    console.log("App is running on port " + config["port"]);
-});
+app.get('/test.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'test.html'));
+  });

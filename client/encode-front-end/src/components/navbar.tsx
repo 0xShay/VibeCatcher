@@ -2,8 +2,18 @@
 // This file contains navbar component
 // Importing necessary modules
 
+import React from "react";
+
 // Defining Navbar component (TypeScript)
 const Navbar: React.FC = () => {
+
+  const loginViaGoogle = () => {
+    // Redirection to Google OAuth flow
+
+    const url = "http://localhost:3000/auth/google";
+    window.location.href = url;
+  }
+
   return (
     <nav className="bg-gray-900 py-4 w-full">
       <div className="container mx-auto flex justify-between items-center font-[satoshi]">
@@ -14,17 +24,18 @@ const Navbar: React.FC = () => {
           <a href="#" className="text-white hover:text-gray-400">
             Home
           </a>
-          <a href="#" className="text-white hover:text-gray-400">
+          <a href="#about" className="text-white hover:text-gray-400">
             About
           </a>
-          <a href="#" className="text-white hover:text-gray-400">
+          <a href="#contact" className="text-white hover:text-gray-400">
             Contact
           </a>
         </div>
-        <div className="flex w-1/5 justify-center items-start font-bold ">
-          <a href="#" className="text-white hover:text-gray-400 pr-10">
+        <div className="flex w-1/5 justify-center items-start font-bold">
+
+          <button onClick={loginViaGoogle} className="text-white hover:text-gray-400 pr-10">
             Login
-          </a>
+          </button>
           <button className="text-white">
             Get notified
           </button>
@@ -35,3 +46,4 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+

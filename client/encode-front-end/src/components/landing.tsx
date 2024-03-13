@@ -2,7 +2,7 @@ import React from "react";
 
 const Landing: React.FC = () => {
   return (
-    <div>
+    <div id="landing">
       <div className="grid grid grid-cols-3 bg-gray-900 py-4 w-full">
         <div className="leftSide py-10 grid-span-4">
           <h1 className="leading-[4rem] col-span-2 text-6xl font-[satoshi] font-bold text-white pt-10 pb-6 pl-12 ">
